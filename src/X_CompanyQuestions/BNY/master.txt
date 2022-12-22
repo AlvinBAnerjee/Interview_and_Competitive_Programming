@@ -1,0 +1,472 @@
+public class BitProfit {
+    static int findMSB1(int k)
+    {
+        for(int i=31;i>=0;i--)
+        {
+            if(( (k>>i)&1) ==1)
+                return i;
+        }
+        return -1;
+    }
+
+//
+
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        int k=sc.nextInt();
+        int in[]=new int[n];
+        int p[]=new int[n];
+        for(int i=0;i<n;i++)
+        {
+            in[i]=sc.nextInt();
+        }
+        for(int i=0;i<n;i++)
+        {
+            p[i]=sc.nextInt();
+        }
+       int sum1=0;
+        int sum2=0;
+        for(int i=0;i<n;i++)
+        {
+            if(in[i]==k || match(in[i],k))
+            {
+                if(match(in[i],k))
+                sum1+=p[i];
+            }
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(in[i]<k)
+            {
+                sum2+=p[i];
+            }
+        }
+        System.out.println(Math.max(sum1, sum2));
+
+
+    }
+    public static boolean match(int x, int k)
+    {
+        for(int i=0;i<32;i++)
+        {
+            if(((k>>i)==0)&&( (x>>i)==1))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    ///////////////////////////////////////
+    package X_CompanyQuestions.BNY;
+
+    import java.util.*;
+
+    public class DistinctDigits {
+        int arr[]=new int[1000000];
+        static boolean repeated_digit(int n)
+        {
+            HashSet<Integer> a = new HashSet<>();
+            int d;
+            while (n != 0)
+            {
+                d = n % 10;
+                if (a.contains(d))
+                    return false;
+                a.add(d);
+                n /= 10;
+            }
+
+            // return 1 if the number has no
+            // repeated digit
+            return true;
+        }
+        public static void main(String[] args) {
+            Scanner sc=new Scanner(System.in);
+            int prefix[]=new int[1000001];
+
+            for(int i=1;i<=100000;i++)
+            {
+                prefix[i]=prefix[i-1];
+                if(repeated_digit(i))
+                {
+                    prefix[i]++;
+                }
+            }
+            int l=sc.nextInt();
+            int r=sc.nextInt();
+            System.out.println(prefix[r]-prefix[l-1]);
+
+
+
+
+        }
+    }
+///////////////////////////////
+public class PorfolioBacktesting {
+    static int max=0;
+    static int solve(int[] arr, int k){
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        int sum = 0;
+        for(int price : arr){
+            if(price > 0)
+                sum += price;
+            else{
+                if(sum + price >= 0){
+                    if(minHeap.size() < k){
+                        sum += price;
+                        minHeap.add(price);
+                    }else{
+                        if(price > minHeap.peek()){
+                            sum -= minHeap.poll();
+                            sum += price;
+                            minHeap.add(price);
+                        }
+                    }
+                }else {
+                    if(minHeap.size() > 0 && price > minHeap.peek()){
+                        sum -= minHeap.poll();
+                        sum += price;
+                        minHeap.add(price);
+                    }
+                }
+            }
+        }
+        return (minHeap.size() == k)? sum : -1;
+    }
+    public static void main(String[] args) {
+
+        int[] arr = {-50 ,10, -5, 10, 20, -10, -100, 1000};
+        int k = 2;
+        System.out.println(solve(arr, k));
+    }
+    /////////////////////////
+    package X_CompanyQuestions.BNY;
+
+    import java.util.*;
+
+    public class Predessor {
+        static class Edge
+        {
+            int u;
+            int v;
+            int w;
+            Edge(int u, int v, int w)
+            {
+                this.u=u;
+                this.v=v;
+                this.w=w;
+            }
+        }
+        static class Pair{
+            int i;
+            int dist;
+            HashSet<Integer> set;
+            Pair(int i, int dist, HashSet<Integer> x)
+            {
+                this.i=i;
+                this.dist=dist;
+                set=new HashSet<>();
+                for(int y: x)
+                {
+                    set.add(y);
+                }
+            }
+        }
+        static class myComp implements Comparator<Pair>
+        {
+            @Override
+            public  int compare(Pair o1, Pair o2)
+            {
+                return  o1.dist-o2.dist;
+            }
+        }
+        public static void main(String[] args) {
+            Scanner sc=new Scanner(System.in);
+            int n=sc.nextInt();
+            int m=sc.nextInt();
+            ArrayList<ArrayList<Edge>> g=new ArrayList<>();
+            for(int i=0;i<n;i++)
+            {
+                g.add(new ArrayList<>());
+            }
+            for(int i=0;i<m;i++)
+            {
+                int u=sc.nextInt()-1;
+                int v=sc.nextInt()-1;
+                int w=sc.nextInt();
+                g.get(u).add(new Edge(u,v,w));
+                g.get(v).add(new Edge(v,u,w));
+            }
+            int ans[]=djk(g);
+        }
+        public static int[] djk(ArrayList<ArrayList<Edge>> g)
+        {
+            int n=g.size();
+            int dist[]=new int[n];
+            ArrayList<HashSet<Integer>> p=new ArrayList<>();
+            boolean visited[]=new boolean[n];
+            for(int i=0;i<n;i++)
+            {
+                p.add(new HashSet<>());
+            }
+            Arrays.fill(dist,Integer.MAX_VALUE);
+            PriorityQueue<Pair> pq=new PriorityQueue<>(new myComp());
+            HashSet<Integer> temp=new HashSet<>();
+            temp.add(0);
+            p.get(0).add(0);
+            pq.add(new Pair(0,0, temp));
+            dist[0]=0;
+            while(!pq.isEmpty())
+            {
+                Pair top=pq.remove();
+                int u=top.i;
+                int d=top.dist;
+                if(visited[u])
+                {
+                    if(dist[u]==d)
+                    {
+                        p.get(u).addAll(top.set);
+                        for(Edge e: g.get(u))
+                        {
+                            if(!visited[e.v])
+                            {
+                                temp=new HashSet<>();
+                                temp.add(e.v);;
+                                temp.addAll(top.set);
+
+                                pq.add(new Pair(e.v, d+e.w, temp));
+                            }
+                        }
+                    }
+                    continue;
+                }
+                p.get(u).addAll(top.set);
+
+                visited[u]=true;
+                dist[u]=d;
+                for(Edge e: g.get(u))
+                {
+                    if(!visited[e.v])
+                    {
+                        temp=new HashSet<>();
+                        temp.add(e.v);;
+                        temp.addAll(top.set);
+
+                        pq.add(new Pair(e.v, d+e.w, temp));
+                    }
+                }
+            }
+            for(int i=0;i<n;i++)
+            {
+                System.out.println(i+" : "+p.get(i).toString());
+            }
+            System.out.println(Arrays.toString(dist));
+            return dist;
+    /*
+    6 8
+    3 6 2
+    1 3 2
+    4 6 1
+    2 4 1
+    5 3 1
+    2 3 2
+    2 1 2
+    5 4 1
+
+
+
+     */
+        }
+    }
+
+//////////////////////////////
+package X_CompanyQuestions.BNY;
+
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class ProcessSchedulaer {
+    static class Pair{
+        int start;
+        int end;
+        Pair(int start, int end)
+        {this.start=start;
+        this.end=end;}
+    }
+    static class myComp implements Comparator<Pair> {
+        @Override
+        public int compare(Pair p1, Pair p2)
+        {
+            return p1.start-p2.start;
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        PriorityQueue<Pair> pq1=new PriorityQueue<>(new myComp());
+        int n=sc.nextInt();
+        for(int i=0;i<n;i++)
+        {
+            pq1.add(new Pair(sc.nextInt(), sc.nextInt()));
+        }
+        PriorityQueue<Integer> pq2=new PriorityQueue<>();
+        while(!pq1.isEmpty())
+        {
+            Pair top=pq1.remove();
+            if(pq2.isEmpty() )
+            {
+                pq2.add(top.end);
+            }
+            else
+            {
+                if(pq2.peek()<top.start)
+                {
+                    pq2.remove();
+                }
+                pq2.add(top.end);
+            }
+        }
+        System.out.println(pq2.size());
+    }
+}
+
+///////////////////////////
+package X_CompanyQuestions.BNY;
+
+import java.util.Scanner;
+
+public class PurchaseOptimization {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        long arr[]=new long[n+1];
+        long sum=0;
+        for(int i=1;i<=n;i++)
+        {
+            sum+=sc.nextInt();
+            arr[i]=sum;
+        }
+
+        int q=sc.nextInt();
+
+        while(q-->0)
+        {
+            int pos=sc.nextInt();
+            int amount=sc.nextInt();
+            //pos--;
+            int low=pos;
+            int high=n;
+            int max=0;
+            while(low<=high)
+            {
+                int mid=(low+high)/2;
+                if(arr[mid]-arr[pos-1]<=amount)
+                {
+                    //System.out.println(mid + " "+pos);
+                    max=mid-pos+1;
+                    low=mid+1;
+                }
+                else
+                {
+                    high=mid-1;
+                }
+            }
+            System.out.println(max);
+        }
+    }
+}
+/*
+5
+3 4 5 5 7
+3
+2 10
+1 24
+5 5
+ */
+ /////////////////////////////////////////////////////////////////////////////////////////////
+ package X_CompanyQuestions.BNY;
+
+ import java.util.*;
+
+ public class Pythagorus {
+     public static void main(String[] args) {
+         Scanner sc=new Scanner(System.in);
+         int n=sc.nextInt();
+         ArrayList<ArrayList<Integer>> g=new ArrayList<>();
+         for(int i=0;i<n;i++)
+         {
+             g.add(new ArrayList<>());
+         }
+         for(int i=0;i<n-1;i++)
+         {
+             int u=sc.nextInt();
+             int v=sc.nextInt();
+             g.get(u).add(v);
+             g.get(v).add(u);
+         }
+         int x=sc.nextInt();
+         int y=sc.nextInt();
+         int z=sc.nextInt();
+         int dist_x[]=BFS(x,g);
+         int dist_y[]=BFS(y,g);
+         int dist_z[]=BFS(z,g);
+         System.out.println(Arrays.toString(dist_x));
+         System.out.println(Arrays.toString(dist_y));
+         System.out.println(Arrays.toString(dist_z));
+         int count=0;
+         for(int i=0;i<n;i++)
+         {
+             if(i==x || i==y || i==z)continue;
+             int a=dist_x[i]*dist_x[i];
+             int b=dist_y[i]*dist_y[i];
+             int c=dist_z[i]*dist_z[i];
+             if(a + b ==c || b+c == a || a+c==b)
+             {
+                 count++;
+                 System.out.println(i);
+             }
+         }
+         System.out.println(count);
+     }
+     public static int[] BFS(int u, ArrayList<ArrayList<Integer>> g)
+     {
+         int n=g.size();
+         int dist[]=new int[n];
+         int level=0;
+         Queue<Integer> q=new LinkedList<>();
+         boolean visited[]=new boolean[n];
+         q.add(u);
+         while (!q.isEmpty())
+         {
+             int size=q.size();
+             while(size-->0)
+             {
+                 int top=q.remove();
+                 if(visited[top])continue;
+                 visited[top]=true;
+                 dist[top]=level;
+                 for(int v: g.get(top))
+                 {
+                     q.add(v);
+                 }
+             }
+             level++;
+         }
+         return dist;
+     }
+ }
+ /*
+ 10
+ 0 4
+ 0 1
+ 1 2
+ 1 3
+ 3 5
+ 3 7
+ 5 6
+ 7 8
+ 8 9
+ 4 6 9
+ op:1
+  */

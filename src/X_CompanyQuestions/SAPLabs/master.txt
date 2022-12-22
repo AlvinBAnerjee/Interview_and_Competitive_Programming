@@ -1,0 +1,183 @@
+Smallest Perm
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int n, k;
+	cin >> n >> k;
+
+	vector<int> a(k), ans;
+	for(int i = 0; i < k; i++)
+		cin >> a[i];
+
+	int ele = 1;
+	for(int i = 0; i < k; i++) {
+		for(int j = 1; j < a[i]; j++) {
+			ans.push_back(ele + j);
+		}
+		ans.push_back(ele);
+		ele += a[i];
+	}
+
+	for(int i = 0; i < ans.size(); i++)
+		cout << ans[i] << " ";
+}
+.........................
+Points of Origin
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+
+
+long long linesPassingThroughOrigin(std::vector<std::vector<long long>> &points , int n)
+{
+    std::unordered_map<float,long long> umap;
+    for(int i = 0 ; i < n ; i++)
+    {
+        if(umap.find((points[i][1])/(double)points[i][0]) == umap.end())
+        {
+            umap[(points[i][1])/(double)points[i][0]] = 1;
+        }
+        else
+        {
+            umap[(points[i][1])/(double)points[i][0]]++;
+        }
+    }
+    long long count = 0;
+    for(auto i : umap)
+    {
+        count += (i.second*(i.second-1))/2;
+    }
+    return count;
+}
+
+int main()
+{
+    int n;
+    std::cin >> n;
+    std::vector<std::vector<long long>> points;
+    for(long long i  = 0 , x ,y ; i < n ; i++)
+    {
+        std::cin>>x>>y;
+        points.push_back({x,y});
+    }
+    std::cout<<linesPassingThroughOrigin(points,n)<<std::endl;
+}
+.............................
+Candies
+#include <bits/stdc++.h>
+using namespace std;
+
+int solve(int n, int x, vector<int>& arr){
+    if(x > n) return 0;
+    priority_queue<int, vector<int>, greater<int>>pq;
+    for(auto it: arr) pq.push(it);
+    while(pq.size() != x){
+        int x = pq.top();
+        pq.pop();
+        int y = pq.top();
+        pq.pop();
+        pq.push(x + y);
+    }
+    int low = 0, high = *max_element(arr.begin(), arr.end()), mid, res = -1;
+    while(low <= high){
+        mid = low + (high - low) / 2;
+        if(pq.top() >= mid){
+            res = mid;
+            low = mid + 1;
+        }
+        else high = mid - 1;
+    }
+    return res;
+}
+
+int main()
+{
+    int n, x;
+    cin>>n>>x;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++) cin>>arr[i];
+    cout<<solve(n, x, arr)<<endl;
+    return 0;
+}
+
+#include<iostream>
+#include<vector>
+#include<climits>
+
+bool canDistributeXdistinctCandies(std::vector<int> candies , int x , int n , long long k)
+{
+    int count = 0;
+    long long sum = 0;
+    for(int i = 0 ; i < n ; i++)
+    {
+
+        if(candies[i] >= k)
+        {
+            count++;
+        }
+        else if(sum+candies[i] >= k)
+        {
+            sum = sum+candies[i]-k;
+            count++;
+        }
+        else
+        {
+            sum += candies[i];
+        }
+        if(count >= x)
+            return true;
+    }
+    return false;
+}
+long long maxFreindsCanBeInvited(std::vector<int> &candies , int n , int x)
+{
+    std::sort(candies.rbegin(),candies.rend());
+    long long start = 1;
+    long long end = 100000000000;
+    long long res = 0;
+    long long mid = 0;
+    while(start <= end)
+    {
+        mid = (start+end)/2;
+        if(canDistributeXdistinctCandies(candies,x,n,mid) == true)
+        {
+            if(mid > res)
+                res = mid;
+            start = mid+1;
+        }
+        else
+        {
+            end = mid-1;
+        }
+    }
+    return res;
+}
+
+int main()
+{
+    int X, N;
+    std::cin>>N>>X;
+    std::vector<int> candies;
+    for(int i = 0 , temp = 0; i < N ; i++)
+    {
+        std::cin>>temp;
+        candies.push_back(temp);
+    }
+    std::cout<<maxFreindsCanBeInvited(candies,N,X);
+}
+
+...............................
+
+first question me sare prime number nikalkalke strore karlena o(nloglogn) me hojata wo sieve of eratosthenes concept se
+.............................
+Seive
+int n;
+vector<bool> is_prime(n+1, true);
+is_prime[0] = is_prime[1] = false;
+for (int i = 2; i <= n; i++) {
+    if (is_prime[i] && (long long)i * i <= n) {
+        for (int j = i * i; j <= n; j += i)
+            is_prime[j] = false;
+    }
+}

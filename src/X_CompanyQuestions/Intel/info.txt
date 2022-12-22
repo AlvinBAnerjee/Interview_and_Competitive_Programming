@@ -1,0 +1,28 @@
+2 coding question. One matrix boundary traversal and other finding prime, also evaluate expression
+Aptitude question 20
+Cs fundamental/ vlsi questions
+
+https://www.geeksforgeeks.org/expression-evaluation/amp/
+
+Coding Question 1 : #include<stdio.h>
+using namespace std;
+int main() {
+    int x , y;
+    cin>>x;
+    cin>>y;
+    int mul = 1 , temp;
+    int rem = x%y;
+    if(rem == 0){
+        cout<<x;
+        return 0;
+    }
+    do{
+        mul = mul10;
+        temp = rem mul;
+        temp = temp%y;
+        temp = y-temp;
+    }while(temp >= mul);
+    int newNum = x*mul + temp;
+    cout<<newNum;
+    return 0;
+}

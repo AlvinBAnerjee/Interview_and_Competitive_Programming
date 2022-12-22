@@ -1,0 +1,712 @@
+package X_CompanyQuestions.Navi;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class BuyingParts {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int p=sc.nextInt();
+        int n=sc.nextInt();
+        int arr[]=new int[n];
+        for(int i=0;i<n;i++)
+            arr[i]=sc.nextInt();
+        Arrays.sort(arr);
+        int dp[][]=new int[n+2][p+2];
+        for(int x[]:dp)
+        {
+            Arrays.fill(x,-1);
+        }
+        System.out.println(rec(0,p,arr,dp));
+    }
+    public  static  int rec(int idx, int p,int arr[], int dp[][])
+    {
+        if(idx>=arr.length && p>0)return 1000000000;
+        if(p==0)return 0;
+        if(dp[idx][p]!=-1)return dp[idx][p];
+
+        int take=Integer.MAX_VALUE;
+        if(idx<arr.length-1)
+        {
+            take=Math.max(arr[idx+1]-arr[idx], rec(idx+2, p-1, arr,dp));
+        }
+        int dont=rec(idx+1, p, arr,dp );
+        return dp[idx][p]=Math.min(take, dont);
+    }
+
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class CityTravel {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        HashMap<String, ArrayList<String>> map=new HashMap<>();
+        int n=sc.nextInt();
+        sc.nextLine();
+        for(int i=0;i<n;i++)
+        {
+            String cityA=sc.next().trim();
+            String cityB=sc.nextLine().trim();
+            if(!map.containsKey(cityA))
+                map.put(cityA,new ArrayList<>());
+            if(!map.containsKey(cityB))
+                map.put(cityB,new ArrayList<>());
+            map.get(cityA).add(cityB);
+        }
+        for(String x: map.keySet())
+        {
+            System.out.println(x+" : "+map.get(x).toString());
+        }
+        String start=sc.nextLine();
+        HashSet<String> visited=new HashSet<>();
+        rec(start, map,visited);
+
+    }
+    public static void rec(String start, HashMap<String, ArrayList<String>> map, HashSet<String> visited)
+    {
+        visited.add(start);
+        System.out.println(start);
+        for(String v: map.get(start))
+        {
+            if(!visited.contains(v))
+            {
+                rec(v, map, visited);
+            }
+        }
+    }
+}
+/*
+5
+Bangalore Hyderabad
+Bangalore Chennai
+Hyderabad Mumbai
+Hyderabad Delhi
+Chennai Kerela
+Bangalore
+ */
+package X_CompanyQuestions.Navi;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class CleanVillage {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        int m=sc.nextInt();
+        int arr1[]=new int[m];
+        int arr2[]=new int[m];
+        for(int i=0;i<m;i++)
+        {
+            arr1[i]=sc.nextInt();
+            arr2[i]=-arr1[i];
+        }
+        Arrays.sort(arr1);
+        Arrays.sort(arr2);
+        int x=solve(arr1, n);
+        int y=solve(arr2,n);
+        System.out.println(Math.min(x,y));
+    }
+    static  int solve(int arr[], int n)
+    {
+        int m=arr.length;
+        int prefix[]=new int[m];
+        prefix[0]=Math.abs(arr[0]);
+        for(int i=1;i<m;i++)
+            prefix[i]=prefix[i-1]+Math.abs(arr[i]-arr[i-1]);
+        int res=Integer.MAX_VALUE;
+        for(int i=n-1;i<m;i++)
+        {
+            if(i==n-1)
+            {
+                res=Math.min(res, prefix[i]);
+            }
+            else
+            {
+                res=Math.min(res, prefix[i]-prefix[i-n+1] + Math.abs(arr[i-n+1]));
+            }
+        }
+        return res;
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class CruelBoss {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int q=sc.nextInt();
+        int dp[]=new int[200];
+        Arrays.fill(dp,-1);
+        rec(150, dp);
+        while(q-->0)
+        {
+            int n=sc.nextInt();
+            System.out.println(dp[n]);
+        }
+    }
+    public static  int rec(int n, int dp[])
+    {
+        if(n<=0)return 0;
+        if(dp[n]!=-1)return dp[n];
+        if(n<=2)return 1;
+        if(n==3)return  2;
+        return  dp[n]=rec(n-1,dp)+rec(n-3,dp);
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class DivideAndConquer {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        ArrayList<ArrayList<Integer>> g=new ArrayList<>();
+        for(int i=0;i<n;i++)
+            g.add(new ArrayList<>());
+        int m=sc.nextInt();
+        for(int i=0;i<m;i++)
+        {
+            int u=sc.nextInt()-1;
+            int v=sc.nextInt()-1;
+            g.get(u).add(v);
+            g.get(v).add(u);
+        }
+        int max=1;
+        boolean visited[]=new boolean[n];
+        for(int i=0;i<n;i++)
+        {
+            if(!visited[i])
+            {
+                int temp=rec(i,visited, g);
+                max=Math.max(max, temp);
+            }
+        }
+        System.out.println(max);
+    }
+    static  int rec(int u, boolean visited[], ArrayList<ArrayList<Integer>> g)
+    {
+        visited[u]=true;
+        int count=1;
+        for(int v: g.get(u))
+        {
+            if(!visited[v])
+            {
+                count+=rec(v, visited, g);
+            }
+        }
+        return count;
+    }
+}
+/*
+5
+3
+2
+4
+1
+3
+1
+3
+5
+
+5
+3
+2 1 4 3 1 5
+ */package X_CompanyQuestions.Navi;
+
+   import java.util.*;
+
+   public class JackSparrow {
+       public static void main(String[] args) {
+           Scanner sc=new Scanner(System.in);
+           int n=sc.nextInt();
+           int k=sc.nextInt();
+           int arr[]=new int[n];
+           for(int i=0;i<n;i++)
+           {
+               arr[i]=sc.nextInt();
+           }
+           ArrayList<ArrayList<Integer>> g=new ArrayList<>();
+           for(int i=0;i<n;i++)
+           {
+               g.add(new ArrayList<>());
+           }
+
+           for(int i=0;i<n-1;i++)
+           {
+               int u=sc.nextInt()-1;
+               int v=sc.nextInt()-1;
+               if(arr[u]==arr[v])
+               {
+                   g.get(u).add(v);
+                   g.get(v).add(u);
+               }
+
+           }
+           //for(int i=0;i<n;i++)
+               //System.out.println(g.get(i).toString());
+           System.out.println(solve(g,n));
+
+       }
+       public static   int solve(ArrayList<ArrayList<Integer>> g, int n)
+       {
+           boolean visited[]=new boolean[n];
+           int res=0;
+           for(int i=0;i<n;i++)
+           {
+               if(!visited[i])
+               {
+                   dfs(g, i, visited);
+                   int temp=findMax(g, n,i);
+                   res=Math.max(res, temp);
+                   //System.out.println(temp);
+               }
+           }
+           return res;
+       }
+       public static   void  dfs(ArrayList<ArrayList<Integer>> g, int u, boolean visited[])
+       {
+           visited[u]=true;
+           for(int v: g.get(u))
+           {
+               if(!visited[v])
+               {
+                   dfs(g,v,visited);
+               }
+           }
+       }
+       public static int bfs(ArrayList<ArrayList<Integer>> g, int n, int u)
+       {
+           int dist[]=new int[n];
+           Arrays.fill(dist,-1);
+           Queue<Integer> q=new LinkedList<>();
+           q.add(u);
+           dist[u]=0;
+           boolean visited[]=new boolean[n];
+           visited[u]=true;
+           int level=0;
+           while(!q.isEmpty())
+           {
+               int size=q.size();
+               level++;
+               while(size-->0)
+               {
+                   int top=q.remove();
+                   //System.out.println("top: "+top);
+                   visited[top]=true;
+                   dist[top]=level;
+                   for(int v: g.get(top))
+                   {
+                       if(!visited[v])
+                       {
+                           q.add(v);
+                       }
+                   }
+               }
+           }
+           //System.out.println(Arrays.toString(dist));
+           int max=0;
+           for(int i=0;i<n;i++)
+           {
+               if(dist[max]< dist[i])
+                   max=i;
+           }
+           return max;
+
+       }
+       public static int findMax(ArrayList<ArrayList<Integer>> g,int n, int u)
+       {
+           int x=bfs(g, n,u);
+           //System.out.println(u +"  : " + x );
+           int dist[]=new int[n];
+           Arrays.fill(dist,-1);
+           Queue<Integer> q=new LinkedList<>();
+           q.add(x);
+           dist[x]=0;
+           boolean visited[]=new boolean[n];
+           visited[x]=true;
+           int level=0;
+           while(!q.isEmpty())
+           {
+               int size= q.size();
+               level++;
+               while(size-->0)
+               {
+                   int top=q.remove();
+                   visited[top]=true;
+                   dist[top]=level;
+                   for(int v: g.get(top))
+                   {
+                       if(!visited[v])
+                       {
+                           q.add(v);
+                       }
+                   }
+               }
+           }
+           int max=0;
+           for(int i=0;i<n;i++)
+           {
+               if(dist[max]< dist[i])
+                   max=i;
+           }
+           //System.out.println(Arrays.toString(dist));
+           //System.out.println(max+"hmmmmm");
+           return dist[max];
+       }
+   }
+   /*
+   9 3
+   1 1 1 3 3 2 2 3 1
+   1 2
+   1 3
+   2 4
+   5 2
+   3 6
+   3 7
+   5 8
+   5 9
+
+
+
+
+   5 1
+   1 1 1 1 1
+   1 2
+   2 3
+   3 5
+   3 4
+
+   5 1
+   1 1 1 1 1
+   1 2
+   1 3
+   1 4
+   1 5
+   output - 3
+
+   9 2
+   2 2 2 2 2 1 1 1 1
+   1 2
+   2 3
+   3 5
+   4 3
+   4 6
+   6 7
+   9 6
+   6 8
+   output - 4
+
+   9 3
+   1 1 1 3 3 2 2 3 1
+   1 2
+   1 3
+   2 4
+   5 2
+   3 6
+   3 7
+   5 8
+   5 9
+    */package X_CompanyQuestions.Navi;
+
+      import java.util.HashMap;
+      import java.util.HashSet;
+      import java.util.Scanner;
+
+      public class Lanisters {
+          public static void main(String[] args) {
+              Scanner sc=new Scanner(System.in);
+              HashMap<Character, Character>  map=new HashMap<>();
+              String str=sc.nextLine();
+              char ans[]=new char[str.length()];
+              int c=0;
+              for(int i=0;i< str.length();i++)
+              {
+                  char ch=str.charAt(i);
+                  if(!map.containsKey(ch))
+                  {
+                      map.put(ch, (char)('A'+c++));
+                  }
+                  ans[i]=map.get(ch);
+              }
+              System.out.println(new String(ans));
+
+          }
+      }
+package X_CompanyQuestions.Navi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class MaxUnity {
+    static int parent[];
+    static int size[];
+    static int max=1;
+    public static   int find(int x)
+    {
+        if(x==parent[x])
+            return x;
+        return parent[x]=find(parent[x]);
+    }
+    public static void union(int u, int v)
+    {
+        int x=find(u);
+        int y=find(v);
+        parent[y]=x;
+        size[x]+=size[y];
+        max=Math.max(max, size[x]);
+
+    }
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        parent=new int[n];
+        size=new int[n];
+        for(int i=0;i<n;i++) {
+            parent[i] = i;
+            size[i]=1;
+        }
+        int m=n-1;
+        int from[]=new int[m];
+        int to[]=new int[m];
+        boolean visited[]=new boolean[m];
+        Arrays.fill(visited, true);
+
+
+        for(int i=0;i<m;i++)
+            from[i]=sc.nextInt()-1;
+        for(int i=0;i<m;i++)
+            to[i]=sc.nextInt()-1;
+        int q=sc.nextInt();
+        int query[]=new int[q];
+        for(int i=0;i<q;i++)
+        {
+            query[i]=sc.nextInt()-1;
+            visited[query[i]]=false;
+        }
+        for(int i=0;i<m;i++)
+        {
+            if(visited[i])
+            {
+                union(from[i],to[i]);
+            }
+        }
+        for(int i=query.length-1;i>=0;i--)
+        {
+            System.out.println(max);
+                int u=from[query[i]];
+            int v=to[query[i]];
+            union(u,v);
+        }
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class RemoveMiddleCharacter {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        String str=sc.nextLine();
+        System.out.println(solve(str));
+    }
+    public static String solve(String str)
+    {
+        HashMap<Character, ArrayList<Integer>>map=new HashMap<>();
+        for(int i=0;i<str.length();i++)
+        {
+            char ch=str.charAt(i);
+            if(!map.containsKey(ch))
+            {
+                map.put(ch,new ArrayList<>());
+            }
+            map.get(ch).add(i);
+        }
+        HashSet<Integer> forbidden=new HashSet<>();
+        for(char ch: map.keySet())
+        {
+            int size=map.get(ch).size();
+            if(size%2==0)
+            {
+                forbidden.add(map.get(ch).get(size/2-1));
+                forbidden.add(map.get(ch).get(size/2));
+            }
+            else
+            {
+                forbidden.add(map.get(ch).get(size/2));
+
+            }
+        }
+        int len=str.length()-forbidden.size();
+        char ans[]=new char[len];
+        int index=0;
+        for(int i=0;i<str.length();i++)
+        {
+            char ch=str.charAt(i);
+            if(!forbidden.contains(i))
+            {
+                ans[index++]=ch;
+            }
+        }
+        return  new String(ans);
+
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class StockBuySell {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int t=sc.nextInt();
+        while(t-->0){
+            int k=sc.nextInt();
+            int n=sc.nextInt();
+            int price[]=new int[n];
+            for(int i=0;i<n;i++){
+                price[i]=sc.nextInt();
+            }
+            System.out.println(solve(price, n ,k));
+        }
+    }
+    public static int solve(int price[], int n, int k)
+    {
+        int dp[][][]=new int[n][2][k+1];
+        for(int x[][]: dp)
+        {
+            for(int y[]:x)
+            {
+                Arrays.fill(y,-1);
+            }
+        }
+
+        return rec(0, 1, k, price, dp);
+    }
+    public static  int rec(int day, int canBuy, int cap, int price[], int dp[][][])
+    {
+        if(day==price.length)return  0;
+        if(cap==0)return 0;
+        if(dp[day][canBuy][cap]!=-1)return dp[day][canBuy][cap];
+        if(canBuy==1){
+            return dp[day][canBuy][cap]=Math.max( -price[day] + rec(day+1, 0, cap, price,dp),
+                    0 + rec(day+1, 1, cap, price,dp));
+        }
+        else
+        {
+            return dp[day][canBuy][cap]=Math.max( price[day] + rec(day+1, 1, cap-1, price,dp),
+                    0 + rec(day+1, 0, cap, price,dp));
+        }
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class WarLane {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        int l=sc.nextInt();
+        int arr[]=new int[n+2];
+        arr[0]=0;
+        arr[n+1]=n;
+        for(int i=1;i<=n;i++)
+        {
+            arr[i]=sc.nextInt();
+        }
+        Arrays.sort(arr);
+        double max=Integer.MIN_VALUE;
+        for(int i=1;i<=n+1;i++)
+        {
+            double diff=arr[i]-arr[i-1];
+            //System.out.println(diff);
+            max=Math.max(diff/2,max);
+        }
+        System.out.println((int)Math.ceil(max));
+    }
+}
+package X_CompanyQuestions.Navi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class MaxUnity {
+    static int parent[];
+    static int size[];
+    static int max=1;
+    public static   int find(int x)
+    {
+        if(x==parent[x])
+            return x;
+        return parent[x]=find(parent[x]);
+    }
+    public static void union(int u, int v)
+    {
+        int x=find(u);
+        int y=find(v);
+        parent[y]=x;
+        size[x]+=size[y];
+        max=Math.max(max, size[x]);
+
+    }
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        parent=new int[n];
+        size=new int[n];
+        for(int i=0;i<n;i++) {
+            parent[i] = i;
+            size[i]=1;
+        }
+        int m=n-1;
+        int from[]=new int[m];
+        int to[]=new int[m];
+        boolean visited[]=new boolean[m];
+        Arrays.fill(visited, true);
+
+
+        for(int i=0;i<m;i++)
+            from[i]=sc.nextInt()-1;
+        for(int i=0;i<m;i++)
+            to[i]=sc.nextInt()-1;
+        int q=sc.nextInt();
+        int query[]=new int[q];
+        for(int i=0;i<q;i++)
+        {
+            query[i]=sc.nextInt()-1;
+            visited[query[i]]=false;
+        }
+        for(int i=0;i<m;i++)
+        {
+            if(visited[i])
+            {
+                union(from[i],to[i]);
+            }
+        }
+        for(int i=query.length-1;i>=0;i--)
+        {
+            System.out.println(max);
+                int u=from[query[i]];
+            int v=to[query[i]];
+            union(u,v);
+        }
+    }
+}
+
