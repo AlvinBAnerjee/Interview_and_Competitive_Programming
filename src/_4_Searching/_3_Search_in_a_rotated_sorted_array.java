@@ -34,49 +34,32 @@ Output : Found at index 3
  */
 public class _3_Search_in_a_rotated_sorted_array {
     public static void main(String[] args) {
-        int arr[] = {3,1};
+        int arr[] = {3, 1};
         int key = 0;
         //System.out.println(new _3_Search_in_a_rotated_sorted_array().search(arr,key));
 
     }
 
     public int search(int[] arr, int target) {
-        int l=0;
-        int r=arr.length-1;
-
-        while(l<=r)
-        {
-            if(r==l+1)
-            {
-                if (arr[l]==target)
-                    return l;
-                if (arr[r]==target)
-                    return r;
-            }
-            int mid=(l+r)/2;
-            System.out.println(mid +" "+l+ " "+ r);
-
-            if(arr[mid]==target)
+        int l = 0;
+        int r = arr.length - 1;
+        while (l <= r) {
+            int mid = (l + r) / 2;
+            if (arr[mid] == target)
                 return mid;
-            else if(arr[l]<arr[mid])//left subarray is sorted
+            else if (arr[mid] < arr[r])//right side is sorted
             {
-                if(arr[l]<=target && target < arr[mid])
-                {
-                    r=mid-1;
+                if (arr[mid] < target && target <= arr[r]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
                 }
-                else{
-                    l=mid+1;
-                }
-            }
-            else // ( arr[mid] < arr[r])//right subarray is sorted
+            } else// left side is sorted
             {
-                if(arr[mid] < target &&  target <= arr[r])
-                {
-                    l=mid+1;
-                }
-                else
-                {
-                    r=mid-1;
+                if (arr[l] <= target && target < arr[mid]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
                 }
             }
         }
