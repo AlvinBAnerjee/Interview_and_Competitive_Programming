@@ -1,6 +1,6 @@
 package _1_BitMagic;
 
-public class x_only_one_number_occurs_once {
+public class  x_only_one_number_occurs_once {
     /*
     Given an integer array nums where every element appears three times except for one, which appears exactly once.
     Find the single element and return it.
