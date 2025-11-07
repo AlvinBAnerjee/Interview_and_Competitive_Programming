@@ -37,4 +37,26 @@ public class _3_ModularEmp {
         }
         return  x%C;
     }
+    public int powMod(int x, int n, int M) {
+        // code here
+        x=x%M;
+        if(x==1)return 1;
+        if(n==0)return 1;
+
+        if(n==1) return x;
+
+        if(n%2==1)
+        {
+            long temp =  ((long)x*(long)powMod(x,n-1,M));
+            temp=temp%M;
+            return (int)temp;
+        }
+        else
+        {
+            long temp =  ((long)powMod(x,n/2,M))%M;
+            temp=temp*temp;
+            temp=temp%M;
+            return (int)temp;
+        }
+    }
 }
