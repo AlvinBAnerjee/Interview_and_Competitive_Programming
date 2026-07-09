@@ -15,5 +15,6 @@ public class Main {
         ob1.join();
         ob2.join();
         System.out.println(queue.toString());
+
     }
 }

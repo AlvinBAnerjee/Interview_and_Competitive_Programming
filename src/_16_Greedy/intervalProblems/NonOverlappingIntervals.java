@@ -1,9 +1,9 @@
-package _16_Greedy;
+package _16_Greedy.intervalProblems;
 
 import java.util.Arrays;
 
-public class _1_ActivitySelection {
-    public int solve(int[][] A) {
+public class NonOverlappingIntervals {
+    public int eraseOverlapIntervals(int[][] A) {
         Arrays.sort(A, (a, b) -> {
             return a[1]-b[1];
         });
@@ -15,12 +15,12 @@ public class _1_ActivitySelection {
             int start=arr[0];
             int end=arr[1];
 
-            if(prev<start)
+            if(prev<=start)
             {
                 prev=end;
                 count++;
             }
         }
-        return count;
+        return A.length-count;
     }
 }

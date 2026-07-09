@@ -1,2 +1,26 @@
-# Project exclude paths
+# Build output
 /out/
+*.class
+
+# macOS
+.DS_Store
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# IntelliJ / IDE (keep .idea/ tracked but ignore local caches)
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+.idea/dictionaries/
+.idea/httpRequests/
+
+# Logs and temp
+*.log
+*.tmp
