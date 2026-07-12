@@ -3,7 +3,7 @@ package _6_Sorting;
 
 import java.util.*;
 
-public class _5_TreeSet_TreeMapCheatSheet {
+public class _0_JavaTreeSet {
 
     public static void main(String[] args) {
 
