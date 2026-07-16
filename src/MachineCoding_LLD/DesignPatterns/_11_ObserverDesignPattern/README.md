@@ -7,7 +7,7 @@ automatically. The "publish/subscribe" pattern.
 
 ## Standard diagram
 
-<img src="./README-1.png" alt="Standard UML class diagram" width="460">
+<img src="./assets/README-1.png" alt="Standard UML class diagram" width="460">
 
 The Subject **holds a list of** Observers and calls `update()` on each when its
 state changes — it doesn't know or care what the concrete observers do.
@@ -17,7 +17,7 @@ state changes — it doesn't know or care what the concrete observers do.
 A `StockTicker` notifies every subscribed `PriceSubscriber` whenever the price
 changes; unsubscribing stops the updates.
 
-<img src="./README-2.png" alt="Example UML class diagram — this repo" width="460">
+<img src="./assets/README-2.png" alt="Example UML class diagram — this repo" width="460">
 
 **Roles:** `Subject` = Subject interface · `StockTicker` = ConcreteSubject ·
 `Observer` = Observer interface · `PriceSubscriber` = ConcreteObserver ·

@@ -21,12 +21,12 @@ six arrows every diagram below uses.
 | 10 | [Strategy](_10_StrategyDesignPattern/README.md) | Behavioral | payment methods |
 | 11 | [Observer](_11_ObserverDesignPattern/README.md) | Behavioral | stock ticker |
 
-Each folder's `README.md` embeds pre-rendered **PNG** diagrams (`README-1.png` =
-standard, `README-2.png` = example) so they display everywhere — GitHub, browsers,
+Each folder's `README.md` embeds pre-rendered **PNG** diagrams (`assets/README-1.png` =
+standard, `assets/README-2.png` = example) so they display everywhere — GitHub, browsers,
 and IntelliJ's Markdown preview — without a Mermaid plugin. The Mermaid source
-lives in `README-source.md`; to regenerate after an edit:
+lives in `assets/README-source.md`; to regenerate after an edit:
 
 ```
-npx @mermaid-js/mermaid-cli -i README-source.md -o _tmp.md -e png -s 2 -b white
-# then rename _tmp-1.png / _tmp-2.png to README-1.png / README-2.png
+npx @mermaid-js/mermaid-cli -i assets/README-source.md -o _tmp.md -e png -s 2 -b white
+# then rename _tmp-1.png / _tmp-2.png to assets/README-1.png / assets/README-2.png
 ```

@@ -36,6 +36,7 @@ classDiagram
     class Sofa { <<interface>> +lieOn() }
     class FurnitureShop { +furnish() }
 
+    FurnitureShop ..> FurnitureFactory : uses
     FurnitureFactory <|.. ModernFurnitureFactory
     FurnitureFactory <|.. VictorianFurnitureFactory
     Chair <|.. ModernChair
@@ -44,7 +45,8 @@ classDiagram
     Sofa <|.. VictorianSofa
     ModernFurnitureFactory ..> ModernChair : creates
     ModernFurnitureFactory ..> ModernSofa : creates
-    FurnitureShop ..> FurnitureFactory : uses
+    VictorianFurnitureFactory ..> VictorianSofa : creates
+    VictorianFurnitureFactory ..> VictorianChair : creates
 ```
 
 **Roles:** `FurnitureFactory` = AbstractFactory · `Modern*`/`Victorian*Factory`

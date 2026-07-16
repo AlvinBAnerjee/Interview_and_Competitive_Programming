@@ -7,7 +7,7 @@ many parts / optional fields.
 
 ## Standard diagram
 
-<img src="./README-1.png" alt="Standard UML class diagram" width="460">
+<img src="./assets/README-1.png" alt="Standard UML class diagram" width="460">
 
 The **Director** knows the *order* of steps; the **ConcreteBuilder** knows *how*
 to do each step and assembles the Product.
@@ -18,7 +18,7 @@ to do each step and assembles the Product.
 swapping `IglooHouseBuilder` for `TipiHouseBuilder` changes the result without
 touching the construction sequence.
 
-<img src="./README-2.png" alt="Example UML class diagram — this repo" width="460">
+<img src="./assets/README-2.png" alt="Example UML class diagram — this repo" width="460">
 
 **Roles:** `HouseBuilder` = Builder · `Igloo`/`TipiHouseBuilder` = ConcreteBuilders
 · `CivilEngineer` = Director · `House` = Product.

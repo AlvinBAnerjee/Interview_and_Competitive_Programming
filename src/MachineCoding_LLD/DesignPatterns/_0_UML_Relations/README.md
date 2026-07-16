@@ -31,7 +31,7 @@ Inheritance / Realization        Association / Aggregation / Composition
 
 ## All six at a glance
 
-<img src="./README-1.png" alt="UML relationship legend — all six arrows" width="820">
+<img src="./assets/README-1.png" alt="UML relationship legend — all six arrows" width="820">
 
 ## Aggregation vs. Composition — the one that trips people up
 

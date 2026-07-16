@@ -7,7 +7,7 @@ interface, guaranteeing the products you get belong to the same variant.
 
 ## Standard diagram
 
-<img src="./README-1.png" alt="Standard UML class diagram" width="460">
+<img src="./assets/README-1.png" alt="Standard UML class diagram" width="460">
 
 ## This repo's example
 
@@ -15,7 +15,7 @@ interface, guaranteeing the products you get belong to the same variant.
 `ModernFurnitureFactory` vs `VictorianFurnitureFactory` swaps the whole style
 consistently.
 
-<img src="./README-2.png" alt="Example UML class diagram — this repo" width="460">
+<img src="./assets/README-2.png" alt="Example UML class diagram — this repo" width="460">
 
 **Roles:** `FurnitureFactory` = AbstractFactory · `Modern*`/`Victorian*Factory`
 = ConcreteFactories · `Chair`,`Sofa` = AbstractProducts · `FurnitureShop` = Client.

@@ -6,7 +6,15 @@ access point to it.
 
 ## Standard diagram
 
-<img src="./assets/README-1.png" alt="Standard UML class diagram" width="460">
+```mermaid
+classDiagram
+    class Singleton {
+        -static instance Singleton
+        -Singleton()
+        +static getInstance() Singleton
+    }
+    Singleton --> Singleton : holds single instance
+```
 
 The self-association (a private static field of its own type) plus a **private
 constructor** is the whole pattern.
@@ -17,7 +25,18 @@ Uses the **initialization-on-demand holder** idiom: the nested `Holder` class
 isn't loaded until `getInstance()` is first called, and the JVM guarantees
 class initialization is thread-safe — so it's lazy *and* safe with no locking.
 
-<img src="./assets/README-2.png" alt="Example UML class diagram — this repo" width="460">
+```mermaid
+classDiagram
+    class Singleton {
+        -Singleton()
+        +static getInstance() Singleton
+        +static main()
+    }
+    class Holder {
+        -static final INSTANCE Singleton
+    }
+    Singleton *-- Holder : nested, owns INSTANCE
+```
 
 Alternatives you should be able to name in an interview: eager `static final`
 field, double-checked locking with `volatile`, or a single-element `enum`
@@ -38,7 +57,20 @@ the same instant, and has every one call `getInstance()`. It then asserts all
 50 futures returned the *same* reference and that the constructor ran exactly
 once — the race the single-threaded `Singleton.main` never exercises.
 
-<img src="./assets/README-3.png" alt="Double-checked locking singleton UML class diagram" width="460">
+```mermaid
+classDiagram
+    class DoubleCheckedLockingSingleton {
+        -volatile static instance DoubleCheckedLockingSingleton
+        -static constructionCount AtomicInteger
+        -DoubleCheckedLockingSingleton()
+        +static getInstance() DoubleCheckedLockingSingleton
+        +static getConstructionCount() int
+    }
+    class DoubleCheckedLockingSingletonRunner {
+        +static main()
+    }
+    DoubleCheckedLockingSingletonRunner ..> DoubleCheckedLockingSingleton : 50 threads race getInstance()
+```
 
 ## Run
 
