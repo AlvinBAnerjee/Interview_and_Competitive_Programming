@@ -39,6 +39,13 @@ class House implements HousePlan
         this.interior = interior;
     }
 
+    @Override
+    public String toString()
+    {
+        return "House{basement=" + basement + ", structure=" + structure
+                + ", roof=" + roof + ", interior=" + interior + "}";
+    }
+
 }
 
 interface HouseBuilder

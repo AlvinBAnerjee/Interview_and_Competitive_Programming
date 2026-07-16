@@ -1,17 +1,22 @@
 package MachineCoding_LLD.DesignPatterns._3_SingletonDesignPattern;
 
-class Singleton
-{
-    private static Singleton obj;
+public class Singleton {
 
-    // private constructor to force use of
-    // getInstance() to create Singleton object
     private Singleton() {}
 
-    public static Singleton getInstance()
-    {
-        if (obj==null)
-            obj = new Singleton();
-        return obj;
+    // Holder class is loaded only on first getInstance() call, and class-loading
+    // is already thread-safe by JVM guarantee, so no synchronization is needed.
+    private static class Holder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+
+    public static Singleton getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public static void main(String[] args) {
+        Singleton first = Singleton.getInstance();
+        Singleton second = Singleton.getInstance();
+        System.out.println("Same instance: " + (first == second));
     }
 }

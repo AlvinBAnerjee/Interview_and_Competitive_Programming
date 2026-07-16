@@ -17,19 +17,21 @@ public class ATMDispenseChain {
 
     public static void main(String[] args) {
         ATMDispenseChain atmDispenser = new ATMDispenseChain();
+        Scanner input = new Scanner(System.in);
         while (true) {
-            int amount = 0;
-            System.out.println("Enter amount to dispense");
-            Scanner input = new Scanner(System.in);
-            amount = input.nextInt();
-            if (amount % 10 != 0) {
-                System.out.println("Amount should be in multiple of 10s.");
-                return;
+            System.out.println("Enter amount to dispense (multiple of 10, or -1 to quit)");
+            int amount = input.nextInt();
+            if (amount == -1) {
+                break;
+            }
+            if (amount <= 0 || amount % 10 != 0) {
+                System.out.println("Amount should be a positive multiple of 10s.");
+                continue;
             }
             // process the request
             atmDispenser.c1.dispense(new Currency(amount));
         }
-
+        input.close();
     }
 
 }

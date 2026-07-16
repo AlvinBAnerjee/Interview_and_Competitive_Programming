@@ -1,11 +1,11 @@
 package MachineCoding_LLD.DesignPatterns._1_FactoryDesignPattern;
 
-import java.util.Scanner;
-
 public class NotificationService {
     public static void main(String[] args) {
-        NotificationFactory n=new NotificationFactory();
-        Notification x=n.createNotification("SMS");
-        x.sendNotification();
+        NotificationFactory factory = new NotificationFactory();
+        for (NotificationType type : NotificationType.values()) {
+            Notification notification = factory.createNotification(type);
+            notification.sendNotification();
+        }
     }
 }

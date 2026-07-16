@@ -46,5 +46,34 @@ class Both implements Menus
     }
 }
 
+// Facade: hides the complexity of picking the right restaurant subsystem
+// for a diner's preference behind a single simple call.
+class RestaurantFacade
+{
+    private final Hotel vegRestaurant = new VegRestaurant();
+    private final Hotel nonVegRestaurant = new NonVegRestaurant();
+    private final Hotel mixedRestaurant = new VegNonBothRestaurant();
+
+    public Menus getMenuFor(String preference)
+    {
+        switch (preference.toLowerCase())
+        {
+            case "veg":
+                return vegRestaurant.getMenus();
+            case "nonveg":
+                return nonVegRestaurant.getMenus();
+            default:
+                return mixedRestaurant.getMenus();
+        }
+    }
+}
+
 public class Client {
+    public static void main(String[] args) {
+        RestaurantFacade facade = new RestaurantFacade();
+
+        System.out.println("Got menu: " + facade.getMenuFor("veg").getClass().getSimpleName());
+        System.out.println("Got menu: " + facade.getMenuFor("nonveg").getClass().getSimpleName());
+        System.out.println("Got menu: " + facade.getMenuFor("both").getClass().getSimpleName());
+    }
 }
