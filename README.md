@@ -62,8 +62,8 @@ Interview_and_Competitive_Programming/
 │   ├── _20_SegmentTree_BinaryIndexedTree/   Range queries, Fenwick tree
 │   ├── _21_Disjoint_sets/        Union-Find with path compression
 │   ├── _22_BackTracking/         Subsets, permutations, combination sum
-│   ├── DesignPatterns/           Gang-of-Four patterns implemented in Java
-│   ├── MultiThreading/           Concurrency primitives, classic problems
+│   ├── MachineCoding_LLD/        Design patterns, LLD problems, and
+│   │                             Concurrency_and_Multithreading (Fundamentals + solved problems)
 │   ├── CNS/                      Cryptography and Network Security exercises
 │   ├── SystemLab/                Operating systems lab assignments (schedulers, IPC)
 │   └── X_CompanyQuestions/       Real interview problems grouped by company
@@ -108,8 +108,8 @@ Interview_and_Competitive_Programming/
 
 ### System-Level and Applied Topics
 
-- [Design Patterns](src/DesignPatterns) — Factory, Singleton, Adapter, Decorator, Builder, Chain of Responsibility, Facade, Proxy.
-- [Multi-Threading](src/MultiThreading) — Producer-Consumer, Reader-Writer, coffee shop simulation, and shared-state examples.
+- [Design Patterns](src/MachineCoding_LLD/DesignPatterns) — Factory, Singleton, Adapter, Decorator, Builder, Chain of Responsibility, Facade, Proxy.
+- [Concurrency & Multithreading](src/MachineCoding_LLD/Concurrency_and_Multithreading) — start with the step-by-step [`_00_Fundamentals/`](src/MachineCoding_LLD/Concurrency_and_Multithreading/_00_Fundamentals) lessons (threads → `synchronized` → `volatile` → atomics → `wait/notify`), then notes, interview Q&A, and solved classics (Producer-Consumer, Reader-Writer, coffee shop, dining philosophers, rate limiter).
 - [CNS](src/CNS) — Cryptography and Network Security lab exercises.
 - [System Lab](src/SystemLab) — Operating system assignments including FIFO, LRU, and LFU scheduling and shared-queue problems.
 

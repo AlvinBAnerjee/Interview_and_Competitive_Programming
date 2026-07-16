@@ -49,10 +49,28 @@ Key nuance interviewers probe:
 
 | File | What's inside |
 |------|---------------|
+| [`_00_Fundamentals/`](./_00_Fundamentals/README.md) | 🟢 **Start here if you're new.** Numbered one-concept-at-a-time lessons (threads → `synchronized` → `volatile` → atomics → `wait/notify`), each runnable. |
 | [`NOTES.md`](./NOTES.md) | **Concise concept notes** — the full cheat sheet (JMM, `volatile`, locks, atomics, executors, collections, latches). |
 | [`INTERVIEW_QnA.md`](./INTERVIEW_QnA.md) | **General question & answer** — the questions interviewers actually ask, with tight model answers. |
-| [`SolvedProblems/`](./SolvedProblems/) | **Runnable Java solutions** to classic concurrency problems, each with its own `PROBLEM.md`. |
-| `ProducerConsumer/`, `ReaderWriter/`, `CoffeeShop/` | Pre-existing worked examples (Semaphore / BlockingQueue based). |
+| [`_04_SolvedProblems/`](./_04_SolvedProblems/) | **Runnable Java solutions** to classic concurrency problems, each with its own `PROBLEM.md`. |
+| `_01_ProducerConsumer/`, `_02_ReaderWriter/`, `_03_CoffeeShop/` | Pre-existing worked examples (Semaphore / BlockingQueue based). |
+
+---
+
+## 🟢 New here? The Fundamentals path
+
+If concurrency is new to you, work through [`_00_Fundamentals/`](./_00_Fundamentals/README.md)
+**in order** before the notes or solved problems. Each lesson is one idea + one tiny
+runnable program:
+
+| # | Lesson | The one idea |
+|---|--------|--------------|
+| 0 | [Thread Creation](./_00_Fundamentals/_00_ThreadCreation/README.md) | 4 ways to start a thread; `start()` vs `run()` vs `join()` |
+| 1 | [Race Condition](./_00_Fundamentals/_01_RaceCondition/README.md) | Why `count++` breaks across threads (**the problem**) |
+| 2 | [`synchronized`](./_00_Fundamentals/_02_Synchronized/README.md) | Mutual exclusion — atomicity **+** visibility |
+| 3 | [`volatile`](./_00_Fundamentals/_03_Volatile/README.md) | Visibility — always read/write from main memory |
+| 4 | [`AtomicInteger`](./_00_Fundamentals/_04_AtomicInteger/README.md) | Lock-free counting via CAS |
+| 5 | [`wait` / `notify`](./_00_Fundamentals/_05_WaitNotify/README.md) | Threads **coordinate** — wait for a condition, signal it |
 
 ---
 
@@ -60,12 +78,12 @@ Key nuance interviewers probe:
 
 | # | Problem | Difficulty | Core Skill Tested | Primitive(s) Used |
 |---|---------|-----------|-------------------|-------------------|
-| 1 | [Print in Order (Foobar / ZeroEvenOdd)](./SolvedProblems/_01_PrintInOrder/PROBLEM.md) | Easy | Thread signalling / turn-taking | `synchronized`+`wait/notify`, `Semaphore`, `Lock`+`Condition` |
-| 2 | [Producer–Consumer](./SolvedProblems/_02_ProducerConsumer/PROBLEM.md) | Easy | Bounded coordination | `wait/notify`, `BlockingQueue`, `Semaphore` |
-| 3 | [Bounded Blocking Queue (from scratch)](./SolvedProblems/_03_BoundedBlockingQueue/PROBLEM.md) | Medium | Build a primitive yourself | `ReentrantLock` + two `Condition`s |
-| 4 | [Thread-Safe Singleton](./SolvedProblems/_04_ThreadSafeSingleton/PROBLEM.md) | Easy | Lazy init + visibility | `volatile` + double-checked locking, holder idiom, enum |
-| 5 | [Dining Philosophers](./SolvedProblems/_05_DiningPhilosophers/PROBLEM.md) | Medium | Deadlock avoidance | Lock ordering, `tryLock`, `Semaphore` (waiter) |
-| 6 | [Rate Limiter (Token Bucket)](./SolvedProblems/_06_RateLimiter/PROBLEM.md) | Medium | Atomic counters under load | `AtomicLong`/CAS, `synchronized` refill |
+| 1 | [Print in Order (Foobar / ZeroEvenOdd)](./_04_SolvedProblems/_01_PrintInOrder/PROBLEM.md) | Easy | Thread signalling / turn-taking | `synchronized`+`wait/notify`, `Semaphore`, `Lock`+`Condition` |
+| 2 | [Producer–Consumer](./_04_SolvedProblems/_02_ProducerConsumer/PROBLEM.md) | Easy | Bounded coordination | `wait/notify`, `BlockingQueue`, `Semaphore` |
+| 3 | [Bounded Blocking Queue (from scratch)](./_04_SolvedProblems/_03_BoundedBlockingQueue/PROBLEM.md) | Medium | Build a primitive yourself | `ReentrantLock` + two `Condition`s |
+| 4 | [Thread-Safe Singleton](./_04_SolvedProblems/_04_ThreadSafeSingleton/PROBLEM.md) | Easy | Lazy init + visibility | `volatile` + double-checked locking, holder idiom, enum |
+| 5 | [Dining Philosophers](./_04_SolvedProblems/_05_DiningPhilosophers/PROBLEM.md) | Medium | Deadlock avoidance | Lock ordering, `tryLock`, `Semaphore` (waiter) |
+| 6 | [Rate Limiter (Token Bucket)](./_04_SolvedProblems/_06_RateLimiter/PROBLEM.md) | Medium | Atomic counters under load | `AtomicLong`/CAS, `synchronized` refill |
 
 > Also relevant (in the LLD folder): [Thread-safe **LRU Cache**](../LLD_Interview_Problems/04_Easy_LRUCache/PROBLEM.md)
 > and [**Rate Limiter** LLD spec](../LLD_Interview_Problems/08_Medium_RateLimiter/PROBLEM.md).
@@ -74,6 +92,7 @@ Key nuance interviewers probe:
 
 ## How to Use This Folder
 
+0. **New to threads?** Do the [`_00_Fundamentals/`](./_00_Fundamentals/README.md) lessons `_00_`→`_05_` in order first.
 1. Read [`NOTES.md`](./NOTES.md) once end-to-end — it's the mental model.
 2. Drill [`INTERVIEW_QnA.md`](./INTERVIEW_QnA.md) — practice saying answers *out loud*.
 3. For each problem: read `PROBLEM.md`, attempt it, then compare with the solution.
