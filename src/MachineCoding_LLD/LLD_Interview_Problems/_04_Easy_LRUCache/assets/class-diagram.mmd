@@ -1,0 +1,81 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class Cache~K,V~ {
+        <<interface>>
+        +get(K) V
+        +put(K, V) void
+        +size() int
+        +capacity() int
+    }
+
+    class PolicyCache~K,V~ {
+        -int capacity
+        -Map~K,V~ store
+        +get(K) V
+        +put(K, V) void
+    }
+
+    class SynchronizedCache~K,V~ {
+        <<Proxy · global lock>>
+        -ReentrantLock lock
+    }
+    class StripedCache~K,V~ {
+        <<N shards · scales>>
+        -Cache[] shards
+        -int mask
+        +shardCount() int
+    }
+
+    class EvictionPolicy~K~ {
+        <<interface · Strategy>>
+        +recordAccess(K) void
+        +recordInsertion(K) void
+        +evict() K
+    }
+    class LruEvictionPolicy~K~
+    class FifoEvictionPolicy~K~
+    class LinkedKeyList~K~ {
+        -Node head
+        -Node tail
+        -Map~K,Node~ index
+        +addFirst(K) void
+        +moveToFirst(K) void
+        +removeLast() K
+    }
+    class Node~K~ {
+        -K key
+        -Node prev
+        -Node next
+    }
+
+    class EvictionListener~K,V~ {
+        <<interface · Observer>>
+        +onEvict(K, V) void
+    }
+    class LoggingEvictionListener~K,V~
+
+    class Caches {
+        <<factory>>
+        +lru(int)$ Cache
+        +fifo(int)$ Cache
+        +synchronizedLru(int)$ Cache
+        +stripedLru(int, int)$ Cache
+    }
+
+    Cache <|.. PolicyCache
+    Cache <|.. SynchronizedCache
+    Cache <|.. StripedCache
+    EvictionPolicy <|.. LruEvictionPolicy
+    EvictionPolicy <|.. FifoEvictionPolicy
+    EvictionListener <|.. LoggingEvictionListener
+
+    PolicyCache o-- EvictionPolicy : delegates eviction
+    PolicyCache o-- EvictionListener : notifies on evict
+    SynchronizedCache o-- Cache : wraps delegate
+    StripedCache *-- SynchronizedCache : builds N shards
+    LruEvictionPolicy *-- LinkedKeyList : owns recency list
+    FifoEvictionPolicy *-- LinkedKeyList : owns insertion list
+    LinkedKeyList *-- Node : doubly-linked nodes
+    Caches ..> Cache : creates

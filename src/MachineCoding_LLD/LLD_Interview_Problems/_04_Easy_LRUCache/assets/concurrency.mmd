@@ -1,0 +1,47 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    subgraph Threads["Many threads calling get / put"]
+        direction LR
+        T1["thread 1<br/>put(k1)"]
+        T2["thread 2<br/>get(k2)"]
+        T3["thread 3<br/>put(k3)"]
+        T4["thread 4<br/>get(k1)"]
+    end
+
+    ROUTE{{"StripedCache<br/><b>shard = spread(key.hashCode) &amp; mask</b>"}}:::route
+
+    T1 --> ROUTE
+    T2 --> ROUTE
+    T3 --> ROUTE
+    T4 --> ROUTE
+
+    subgraph S0["shard 0"]
+        L0["ReentrantLock 0"]:::lock
+        C0["PolicyCache 0<br/>(Map + LRU list)"]:::core
+        L0 --> C0
+    end
+    subgraph S1["shard 1"]
+        L1["ReentrantLock 1"]:::lock
+        C1["PolicyCache 1<br/>(Map + LRU list)"]:::core
+        L1 --> C1
+    end
+    subgraph S2["shard 2"]
+        L2["ReentrantLock 2"]:::lock
+        C2["PolicyCache 2<br/>(Map + LRU list)"]:::core
+        L2 --> C2
+    end
+
+    ROUTE -->|k2| L0
+    ROUTE -->|k3| L1
+    ROUTE -->|"k1 (both threads)"| L2
+
+    NOTE["Different shards → different locks → run in parallel (~N× less contention).<br/>k1's two threads hit the SAME shard → serialized on lock 2 → no corruption.<br/>Trade-off: eviction is per-shard, so LRU &amp; capacity are approximate (what Guava/Caffeine do).<br/>Baseline alternative: one SynchronizedCache = a single global lock (correct, but no parallelism)."]:::note
+
+    S0 --> NOTE
+    S1 --> NOTE
+    S2 --> NOTE
+
+    classDef route fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef lock fill:#fdecea,stroke:#c62828,color:#8e0000;
+    classDef core fill:#e0f0ff,stroke:#0366d6,color:#023;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;

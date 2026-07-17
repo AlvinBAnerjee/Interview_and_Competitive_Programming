@@ -1,0 +1,45 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Client
+    participant PC as PolicyCache
+    participant Map as store · HashMap
+    participant Pol as LruEvictionPolicy
+    participant DLL as LinkedKeyList
+    participant Obs as EvictionListener
+
+    Note over Client,Obs: get(key) — a read that mutates recency
+    Client->>PC: get(key)
+    PC->>Map: containsKey(key)?
+    alt hit
+        Map-->>PC: true
+        PC->>Pol: recordAccess(key)
+        Pol->>DLL: moveToFirst(key)
+        PC->>Map: get(key)
+        Map-->>PC: value
+        PC-->>Client: value
+    else miss
+        Map-->>PC: false
+        PC-->>Client: null
+    end
+
+    Note over Client,Obs: put(key, value) — insert / update / evict
+    Client->>PC: put(key, value)
+    alt key already present
+        PC->>Map: put(key, value)
+        PC->>Pol: recordAccess(key)
+        Pol->>DLL: moveToFirst(key)
+    else new key
+        opt size == capacity
+            PC->>Pol: evict()
+            Pol->>DLL: removeLast()
+            DLL-->>Pol: victim
+            Pol-->>PC: victim
+            PC->>Map: remove(victim)
+            PC->>Obs: onEvict(victim, oldValue)
+        end
+        PC->>Map: put(key, value)
+        PC->>Pol: recordInsertion(key)
+        Pol->>DLL: addFirst(key)
+    end
+    PC-->>Client: void

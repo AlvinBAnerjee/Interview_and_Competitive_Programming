@@ -21,8 +21,8 @@ preparation, ordered by difficulty. Each folder contains a `PROBLEM.md` with:
 |---|---------|-----------|--------------------------|--------------|
 | 1 | [Parking Lot System](./_01_Easy_ParkingLotSystem/PROBLEM.md) · ✅ [**Solution**](./_01_Easy_ParkingLotSystem/SOLUTION.md) | Easy | 🟡 Medium — concurrent park/unpark, slot allocation | Strategy, Factory, Singleton |
 | 2 | [Vending Machine](./_02_Easy_VendingMachine/PROBLEM.md) · ✅ [**Solution**](./_02_Easy_VendingMachine/SOLUTION.md) | Easy | 🟢 Low — single-user state machine | State, Strategy |
-| 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) | Easy | 🟢 Low — turn-based, single game | Strategy, Factory |
-| 4 | [LRU Cache](./_04_Easy_LRUCache/PROBLEM.md) | Easy | 🔴 **High** — thread-safe get/put under contention | — (data structure design) |
+| 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) · ✅ [**Solution**](./_03_Easy_TicTacToe/SOLUTION.md) | Easy | 🟢 Low — one game turn-based; 🟡 across many games (actor per game) | Strategy, Factory, Observer |
+| 4 | [LRU Cache](./_04_Easy_LRUCache/PROBLEM.md) · ✅ [**Solution**](./_04_Easy_LRUCache/SOLUTION.md) | Easy | 🔴 **High** — thread-safe get/put under contention (lock striping) | Strategy, Proxy, Observer, Factory |
 | 5 | [Splitwise](./_05_Medium_Splitwise/PROBLEM.md) | Medium | 🟡 Medium — concurrent expense writes, balance consistency | Strategy, Observer |
 | 6 | [Elevator System](./_06_Medium_ElevatorSystem/PROBLEM.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |
 | 7 | [BookMyShow](./_07_Medium_BookMyShow/PROBLEM.md) | Medium | 🔴 **High** — seat locking, no double-booking | Singleton, Strategy, Observer |
