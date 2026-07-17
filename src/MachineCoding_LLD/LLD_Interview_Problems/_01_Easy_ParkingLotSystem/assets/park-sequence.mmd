@@ -1,0 +1,26 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Driver
+    participant Gate as EntryGate
+    participant Lot as ParkingLot
+    participant SAS as NearestSlotStrategy
+    participant Q as PriorityBlockingQueue~free~
+
+    Driver->>Gate: park(vehicle)
+    Gate->>Lot: park(vehicle)
+    Lot->>SAS: allocate(CAR)
+    SAS->>Q: poll()  (atomic: nearest & remove)
+    alt a free slot exists
+        Q-->>SAS: nearest slot
+        SAS->>SAS: slot.occupy() CAS false→true
+        SAS-->>Lot: Optional[slot]
+        Lot->>Lot: activeTickets.put(id, ticket)
+        Lot-->>Gate: Optional[Ticket]
+        Gate-->>Driver: Ticket
+    else lot full
+        Q-->>SAS: null
+        SAS-->>Lot: Optional.empty
+        Lot-->>Gate: Optional.empty
+        Gate-->>Driver: "Lot full"
+    end

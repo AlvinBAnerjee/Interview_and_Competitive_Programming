@@ -71,6 +71,14 @@ runnable program:
 | 3 | [`volatile`](./_00_Fundamentals/_03_Volatile/README.md) | Visibility — always read/write from main memory |
 | 4 | [`AtomicInteger`](./_00_Fundamentals/_04_AtomicInteger/README.md) | Lock-free counting via CAS |
 | 5 | [`wait` / `notify`](./_00_Fundamentals/_05_WaitNotify/README.md) | Threads **coordinate** — wait for a condition, signal it |
+| 6 | [`ReentrantLock`](./_00_Fundamentals/_06_ReentrantLock/README.md) | Explicit locking — `tryLock`, timeouts, fairness |
+| 7 | [`CountDownLatch`](./_00_Fundamentals/_07_CountDownLatch/README.md) | Wait for **N** threads to finish, once |
+| 8 | [`CyclicBarrier`](./_00_Fundamentals/_08_CyclicBarrier/README.md) | Reusable rendezvous — N threads wait for each other |
+| 9 | [`ExecutorService`](./_00_Fundamentals/_09_ExecutorService/README.md) | Thread pools — stop `new Thread()`, reuse workers |
+| 10 | [`Callable` / `Future`](./_00_Fundamentals/_10_Callable_Future/README.md) | Get a **result** back; `get()` blocks; cancel/timeout |
+| 11 | [`invokeAll` / `invokeAny`](./_00_Fundamentals/_11_InvokeAll_InvokeAny/README.md) | Submit a **batch** — all results, or the first winner |
+| 12 | [`ScheduledExecutorService`](./_00_Fundamentals/_12_ScheduledExecutor/README.md) | Run **later** or **repeatedly** on a timer |
+| 13 | [`CompletableFuture`](./_00_Fundamentals/_13_CompletableFuture/README.md) | **Compose** async steps without blocking |
 
 ---
 

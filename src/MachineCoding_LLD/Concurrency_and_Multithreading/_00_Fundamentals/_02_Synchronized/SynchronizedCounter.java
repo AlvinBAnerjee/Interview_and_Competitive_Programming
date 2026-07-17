@@ -13,6 +13,14 @@ package MachineCoding_LLD.Concurrency_and_Multithreading._00_Fundamentals._02_Sy
  * BONUS: entering/leaving a synchronized block also flushes changes to main memory,
  * so it fixes VISIBILITY too (not just atomicity). synchronized = atomicity + visibility.
  *
+ * ⚠️ BUT that visibility guarantee is CONDITIONAL, not automatic like volatile's.
+ * It only holds between threads that lock the SAME monitor: thread A's unlock
+ * happens-before thread B's later lock of that same object, so B is then guaranteed
+ * to see everything A wrote before unlocking. If B instead reads the field WITHOUT
+ * synchronizing (or synchronizes on a DIFFERENT lock), there is no happens-before
+ * edge — B can still see a stale cached value, same bug as Lesson 3 without volatile.
+ * getCount() below is synchronized precisely so callers actually get this guarantee.
+ *
  * Two equivalent styles are shown. Golden rule: keep the critical section SMALL —
  * lock only the shared-state access, not slow work like I/O.
  */

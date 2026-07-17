@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ClaudeCodeEditorTabs">
-    <option name="activeSessionId" value="2083e855-ea1f-4f99-8fcd-f80a5df385cf" />
+    <option name="activeSessionId" value="cf29bc4f-edb8-4a2c-b8f3-cda8fa5500e2" />
     <option name="openSessionIds">
       <list>
-        <option value="2083e855-ea1f-4f99-8fcd-f80a5df385cf" />
+        <option value="cf29bc4f-edb8-4a2c-b8f3-cda8fa5500e2" />
       </list>
     </option>
     <option name="sessionPaths">
       <map>
-        <entry key="2083e855-ea1f-4f99-8fcd-f80a5df385cf" value="/sessions/76e0d29f-c352-454b-9d08-544958a1e967" />
+        <entry key="cf29bc4f-edb8-4a2c-b8f3-cda8fa5500e2" value="/sessions/227b1966-ff39-4367-92f5-b8374f522819" />
       </map>
     </option>
     <option name="sessionTitles">
       <map>
-        <entry key="2083e855-ea1f-4f99-8fcd-f80a5df385cf" value="@src/MachineCoding_LLD/DesignPatterns/_3_Singleton" />
+        <entry key="cf29bc4f-edb8-4a2c-b8f3-cda8fa5500e2" value="@src/Practice/Singleton/Singleton.java is this goo" />
       </map>
     </option>
   </component>

@@ -1,0 +1,29 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    subgraph Gates["Concurrent gates (many threads)"]
+        direction LR
+        GA["EntryGate A<br/>park(car1)"]
+        GB["EntryGate B<br/>park(car2)"]
+        GC["EntryGate C<br/>park(car3)"]
+    end
+
+    Q(["PriorityBlockingQueue&lt;free slots&gt;<br/><b>ordered by (floor, slot#)</b>"])
+
+    GA e1@--> |poll| Q
+    GB e2@--> |poll| Q
+    GC e3@--> |poll| Q
+
+    Q e4@==> |"atomic poll<br/>→ car1"| S1["Slot F0-CAR-0"]
+    Q e5@==> |"atomic poll<br/>→ car2"| S2["Slot F0-CAR-1"]
+    Q e6@==> |"queue empty<br/>→ car3"| S3["Lot full ✋"]
+
+    S1 e7@-.-> |offer| Q
+    S2 e8@-.-> |offer| Q
+
+    e4@{ animate: true }
+    e5@{ animate: true }
+
+    classDef full fill:#ffe0e0,stroke:#cc0000,color:#900;
+    classDef slot fill:#e0f0ff,stroke:#0366d6,color:#024;
+    class S3 full;
+    class S1,S2 slot;

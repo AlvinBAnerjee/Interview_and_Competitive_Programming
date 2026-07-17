@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * LESSON 0 — How do I even start a thread?
@@ -14,7 +16,7 @@ import java.util.concurrent.Future;
  * most modern. Read them top to bottom.
  *
  * THE #1 TRICK QUESTION:
- *   - t.start()  -> spawns a NEW thread, then runs run() on it   (real concurrency)
+ *   - t.start()  -> spawns a NEW thread, then run run() on it   (real concurrency)
  *   - t.run()    -> just a normal method call on the CURRENT thread (NO new thread!)
  *   Always call start(). Calling run() directly is the classic mistake.
  */
@@ -66,7 +68,20 @@ public class ThreadCreation {
             return 6 * 7;
         };
         Future<Integer> future = pool.submit(job);
-        System.out.println("[Way 4] Callable returned: " + future.get()); // get() blocks until the result is ready
+
+        // future.get() does NOT throw just because the task "isn't there yet" — it BLOCKS
+        // until the result is ready. The exceptions it can throw are:
+        //   - ExecutionException  -> the task itself threw (get its real cause via getCause())
+        //   - InterruptedException -> the waiting thread was interrupted while blocked
+        //   - TimeoutException    -> only from the get(timeout, unit) overload, if it doesn't
+        //                            finish in time
+        // To check completion WITHOUT blocking, use future.isDone() / future.isCancelled().
+        System.out.println("[Way 4] isDone before get(): " + future.isDone());
+        try {
+            System.out.println("[Way 4] Callable returned: " + future.get(1, TimeUnit.SECONDS));
+        } catch (TimeoutException e) {
+            System.out.println("[Way 4] task didn't finish in time");
+        }
 
         pool.shutdown(); // ALWAYS shut a pool down, or the JVM will not exit (non-daemon threads).
 

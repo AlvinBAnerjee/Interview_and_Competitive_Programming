@@ -35,5 +35,5 @@ Output alternates put/took cleanly — no lost or duplicated messages.
 You'd usually reach for a `BlockingQueue` (which hides all of this), a `CountDownLatch`,
 or a `ReentrantLock` + `Condition`. This lesson shows what's happening **underneath** them.
 
-➡️ You've finished Fundamentals. Now try the [Solved Problems](../../_04_SolvedProblems/) —
-start with [Print in Order](../../_04_SolvedProblems/_01_PrintInOrder/PROBLEM.md), which builds directly on this handshake.
+➡️ Next: [Lesson 6 — `ReentrantLock`](../_06_ReentrantLock/README.md): explicit locking
+with powers `synchronized` doesn't have (`tryLock`, timeouts, interruptibility).

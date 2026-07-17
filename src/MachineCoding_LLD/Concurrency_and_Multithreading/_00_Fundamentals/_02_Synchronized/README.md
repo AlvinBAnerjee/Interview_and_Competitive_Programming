@@ -10,6 +10,24 @@ steps now run as one uninterruptible unit.
 > **Bonus:** entering/leaving a `synchronized` block also syncs memory, so it fixes
 > **visibility** too. `synchronized` = **atomicity + visibility**.
 
+## ⚠️ But visibility is conditional, not automatic
+Unlike `volatile` (every write is visible to every future read, unconditionally),
+`synchronized` only guarantees visibility **between threads that lock the *same*
+monitor**. The JMM calls this a *happens-before* edge: thread A's release of a lock
+happens-before thread B's later acquire of **that same lock** — everything A wrote
+before releasing is now guaranteed visible to B.
+
+- Thread A writes inside `synchronized(lock) { x = 5; }`, then thread B reads inside
+  `synchronized(lock) { print(x); }` on the **same `lock`** → B is guaranteed to see `5`.
+- Thread B reads `x` **without** synchronizing at all → **no guarantee**. It can see a
+  stale cached value, exactly like the pre-`volatile` bug in Lesson 3.
+- Thread A and thread B synchronize on **different** lock objects → also **no
+  guarantee** — there's no happens-before edge between unrelated monitors.
+
+So "does the other thread get the update at once?" — **only if it also synchronizes on
+the same lock before reading.** If it peeks at the field unsynchronized, it can get the
+stale value forever, same as an unsynchronized read of a non-volatile field.
+
 ## Two styles (see [`SynchronizedCounter.java`](./SynchronizedCounter.java))
 ```java
 public synchronized void inc() { count++; }   // locks `this` for the whole method

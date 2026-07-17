@@ -1,0 +1,28 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor User
+    participant VM as VendingMachine
+    participant HM as HasMoneyState
+    participant CS as GreedyChangeStrategy
+
+    User->>VM: insertCoin(20), insertCoin(10)
+    Note over VM: state = HAS_MONEY, balance = 30
+
+    User->>VM: selectProduct("A2")  (Soda, price 25)
+    VM->>HM: selectProduct(vm, "A2")
+    HM->>HM: exists? in stock? funds? ✓ (guards)
+    HM->>CS: makeChange(5, reserve + inserted)
+    alt exact change possible
+        CS-->>HM: [FIVE]
+        HM->>VM: setState(DISPENSING)
+        HM->>VM: commitDispense("A2", [FIVE])
+        Note over VM: bank coins · pay [FIVE] · stock--
+        HM->>VM: setState(IDLE)
+        HM-->>VM: DISPENSED(Soda, [FIVE])
+        VM-->>User: Soda + 5 change
+    else cannot make change
+        CS-->>HM: empty
+        HM-->>VM: CANNOT_MAKE_CHANGE (keep money)
+        VM-->>User: cancel for refund
+    end

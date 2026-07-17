@@ -24,3 +24,6 @@
 # Logs and temp
 *.log
 *.tmp
+
+# Practice scratch folder
+/src/Practice/

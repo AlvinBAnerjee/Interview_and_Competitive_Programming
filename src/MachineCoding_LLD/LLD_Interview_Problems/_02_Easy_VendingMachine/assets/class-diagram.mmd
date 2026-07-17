@@ -1,0 +1,71 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class VendingMachine {
+        <<Context>>
+        -Map~String,Product~ catalog
+        -Inventory~String~ productStock
+        -Inventory~Denomination~ coinReserve
+        -List~Denomination~ insertedCoins
+        -VendingState state
+        +insertCoin(Denomination) boolean
+        +selectProduct(String) TransactionResult
+        +cancel() List~Denomination~
+        +commitDispense(code, plan) List~Denomination~
+        +refund() List~Denomination~
+    }
+
+    class VendingState {
+        <<interface>>
+        +insertCoin(VendingMachine, Denomination) boolean
+        +selectProduct(VendingMachine, String) TransactionResult
+        +cancel(VendingMachine) List~Denomination~
+    }
+    class IdleState
+    class HasMoneyState
+    class DispensingState
+
+    class ChangeStrategy {
+        <<interface>>
+        +makeChange(int, Map) Optional~List~
+    }
+    class GreedyChangeStrategy
+
+    class Inventory~K~ {
+        -Map~K,Integer~ counts
+        +addOne(K)
+        +removeOne(K) boolean
+        +count(K) int
+    }
+    class Product {
+        <<record>>
+        +String code
+        +String name
+        +int price
+    }
+    class Denomination {
+        <<enum>>
+        +int value
+    }
+    class TransactionResult {
+        +Status status
+        +Product product
+        +List~Denomination~ change
+    }
+
+    VendingState <|.. IdleState
+    VendingState <|.. HasMoneyState
+    VendingState <|.. DispensingState
+    ChangeStrategy <|.. GreedyChangeStrategy
+
+    VendingMachine o-- VendingState : current (delegates)
+    VendingMachine o-- ChangeStrategy : change policy
+    VendingMachine *-- Inventory : stock + reserve
+    VendingMachine ..> Product : catalog
+    VendingMachine ..> TransactionResult : returns
+
+    IdleState ..> VendingMachine : setState(hasMoney)
+    HasMoneyState ..> VendingMachine : commitDispense / setState
+    HasMoneyState ..> ChangeStrategy : makeChange
+    Inventory ..> Denomination : keyed by

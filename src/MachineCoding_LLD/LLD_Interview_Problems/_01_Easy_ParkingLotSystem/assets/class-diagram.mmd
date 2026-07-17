@@ -1,0 +1,87 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class ParkingLot {
+        <<Singleton>>
+        -List~ParkingFloor~ floors
+        -SlotAssignmentStrategy slotStrategy
+        -PricingStrategy pricingStrategy
+        -ConcurrentMap activeTickets
+        +park(Vehicle) Optional~Ticket~
+        +unpark(Ticket) double
+        +availableSlots(VehicleType) int
+    }
+
+    class SlotAssignmentStrategy {
+        <<interface>>
+        +allocate(VehicleType) Optional~ParkingSlot~
+        +release(ParkingSlot) boolean
+        +availableSlots(VehicleType) int
+    }
+    class NearestSlotStrategy {
+        -Map~VehicleType,PriorityBlockingQueue~ freeByType
+    }
+
+    class PricingStrategy {
+        <<interface>>
+        +calculateFare(Ticket, Instant) double
+    }
+    class HourlyPricingStrategy
+    class FlatRatePricingStrategy
+
+    class VehicleFactory {
+        <<Factory>>
+        +create(VehicleType, String)$ Vehicle
+    }
+
+    class Vehicle {
+        <<abstract>>
+        -String licensePlate
+        -VehicleType type
+    }
+    class Motorcycle
+    class Car
+    class Truck
+
+    class ParkingFloor {
+        -int floorNumber
+        -List~ParkingSlot~ slots
+    }
+    class ParkingSlot {
+        -String id
+        -int floorNumber
+        -int slotNumber
+        -AtomicBoolean occupied
+        +occupy() boolean
+        +vacate() boolean
+    }
+    class Ticket {
+        -String id
+        -Instant entryTime
+        -Instant exitTime
+        -double fare
+    }
+    class EntryGate
+    class ExitGate
+
+    ParkingLot "1" o-- "1" SlotAssignmentStrategy : delegates allocation
+    ParkingLot "1" o-- "1" PricingStrategy : delegates fare
+    ParkingLot "1" *-- "many" ParkingFloor : owns
+    ParkingFloor "1" *-- "many" ParkingSlot : contains
+    ParkingLot "1" o-- "many" Ticket : tracks active
+
+    SlotAssignmentStrategy <|.. NearestSlotStrategy
+    PricingStrategy <|.. HourlyPricingStrategy
+    PricingStrategy <|.. FlatRatePricingStrategy
+    NearestSlotStrategy ..> ParkingSlot : polls / offers
+
+    Vehicle <|-- Motorcycle
+    Vehicle <|-- Car
+    Vehicle <|-- Truck
+    VehicleFactory ..> Vehicle : creates
+
+    EntryGate ..> ParkingLot : park()
+    ExitGate  ..> ParkingLot : unpark()
+    Ticket "1" --> "1" ParkingSlot : reserves
+    Ticket "1" --> "1" Vehicle : for

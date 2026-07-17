@@ -19,16 +19,16 @@ preparation, ordered by difficulty. Each folder contains a `PROBLEM.md` with:
 
 | # | Problem | Difficulty | Multithreading Relevance | Key Patterns |
 |---|---------|-----------|--------------------------|--------------|
-| 1 | [Parking Lot System](./01_Easy_ParkingLotSystem/PROBLEM.md) | Easy | 🟡 Medium — concurrent park/unpark, slot allocation | Strategy, Factory, Singleton |
-| 2 | [Vending Machine](./02_Easy_VendingMachine/PROBLEM.md) | Easy | 🟢 Low — single-user state machine | State, Strategy |
-| 3 | [Tic-Tac-Toe](./03_Easy_TicTacToe/PROBLEM.md) | Easy | 🟢 Low — turn-based, single game | Strategy, Factory |
-| 4 | [LRU Cache](./04_Easy_LRUCache/PROBLEM.md) | Easy | 🔴 **High** — thread-safe get/put under contention | — (data structure design) |
-| 5 | [Splitwise](./05_Medium_Splitwise/PROBLEM.md) | Medium | 🟡 Medium — concurrent expense writes, balance consistency | Strategy, Observer |
-| 6 | [Elevator System](./06_Medium_ElevatorSystem/PROBLEM.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |
-| 7 | [BookMyShow](./07_Medium_BookMyShow/PROBLEM.md) | Medium | 🔴 **High** — seat locking, no double-booking | Singleton, Strategy, Observer |
-| 8 | [Rate Limiter](./08_Medium_RateLimiter/PROBLEM.md) | Medium | 🔴 **High** — atomic counters, sliding window under load | Strategy, Factory |
-| 9 | [Cab Booking System](./09_Hard_CabBookingSystem/PROBLEM.md) | Hard | 🔴 **High** — driver matching, concurrent ride requests | Strategy, Observer, State |
-| 10 | [Stock Exchange / Order Matching](./10_Hard_StockExchange/PROBLEM.md) | Hard | 🔴 **Critical** — lock-free/low-latency matching engine | Strategy, Observer, Command |
+| 1 | [Parking Lot System](./_01_Easy_ParkingLotSystem/PROBLEM.md) · ✅ [**Solution**](./_01_Easy_ParkingLotSystem/SOLUTION.md) | Easy | 🟡 Medium — concurrent park/unpark, slot allocation | Strategy, Factory, Singleton |
+| 2 | [Vending Machine](./_02_Easy_VendingMachine/PROBLEM.md) · ✅ [**Solution**](./_02_Easy_VendingMachine/SOLUTION.md) | Easy | 🟢 Low — single-user state machine | State, Strategy |
+| 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) | Easy | 🟢 Low — turn-based, single game | Strategy, Factory |
+| 4 | [LRU Cache](./_04_Easy_LRUCache/PROBLEM.md) | Easy | 🔴 **High** — thread-safe get/put under contention | — (data structure design) |
+| 5 | [Splitwise](./_05_Medium_Splitwise/PROBLEM.md) | Medium | 🟡 Medium — concurrent expense writes, balance consistency | Strategy, Observer |
+| 6 | [Elevator System](./_06_Medium_ElevatorSystem/PROBLEM.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |
+| 7 | [BookMyShow](./_07_Medium_BookMyShow/PROBLEM.md) | Medium | 🔴 **High** — seat locking, no double-booking | Singleton, Strategy, Observer |
+| 8 | [Rate Limiter](./_08_Medium_RateLimiter/PROBLEM.md) | Medium | 🔴 **High** — atomic counters, sliding window under load | Strategy, Factory |
+| 9 | [Cab Booking System](./_09_Hard_CabBookingSystem/PROBLEM.md) | Hard | 🔴 **High** — driver matching, concurrent ride requests | Strategy, Observer, State |
+| 10 | [Stock Exchange / Order Matching](./_10_Hard_StockExchange/PROBLEM.md) | Hard | 🔴 **Critical** — lock-free/low-latency matching engine | Strategy, Observer, Command |
 
 Legend: 🟢 Low · 🟡 Medium · 🔴 High/Critical
 

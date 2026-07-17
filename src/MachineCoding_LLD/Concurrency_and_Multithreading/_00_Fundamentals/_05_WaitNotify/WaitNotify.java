@@ -60,7 +60,7 @@ public class WaitNotify {
             try {
                 for (int i = 1; i <= 5; i++) {
                     mailbox.put("msg-" + i);
-                    Thread.sleep(100);             // produce a little slower than instant
+                    Thread.sleep((long) (100*Math.random()));             // produce a little slower than instant
                 }
             } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         });
@@ -69,6 +69,7 @@ public class WaitNotify {
             try {
                 for (int i = 1; i <= 5; i++) {
                     mailbox.take();
+                    Thread.sleep((long) (100*Math.random()));             // produce a little slower than instant
                 }
             } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         });
