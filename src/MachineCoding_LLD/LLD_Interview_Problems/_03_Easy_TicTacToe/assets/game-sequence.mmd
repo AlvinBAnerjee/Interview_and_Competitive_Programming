@@ -1,0 +1,37 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    participant Driver as playTurn
+    participant P as Player · current
+    participant PS as PlayerStrategy
+    participant G as Game
+    participant B as Board
+    participant WS as WinningStrategy
+    participant Obs as GameObserver
+
+    Driver->>P: nextMove(board)
+    P->>PS: chooseMove(board, symbol)
+    PS-->>P: Move row,col
+    P-->>Driver: Move row,col
+
+    Driver->>G: makeMove(player, row, col)
+    G->>G: validate — turn? in-bounds? empty? not over?
+    Note over G: illegal → InvalidMoveException
+    G->>B: placeAndCheckWin(row, col, symbol)
+    B->>B: place mark, increment filled
+    B->>WS: isWinningMove(board, r, c, symbol)
+    WS-->>B: won?
+    B-->>G: won?
+
+    G->>Obs: onMove(game, player, move)
+
+    alt won
+        G->>G: status = WIN, record winner
+        G->>Obs: onGameOver(game, winner)
+    else board full
+        G->>G: status = DRAW
+        G->>Obs: onGameOver(game, null)
+    else continue
+        G->>G: advance to other player
+    end
+    G-->>Driver: GameStatus

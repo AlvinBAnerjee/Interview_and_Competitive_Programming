@@ -1,0 +1,40 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    subgraph Clients["Client threads (many, shared pool)"]
+        direction LR
+        T1["submitMove(&quot;g-1&quot;, …)"]
+        T2["submitMove(&quot;g-2&quot;, …)"]
+        T3["submitMove(&quot;g-1&quot;, …)"]
+    end
+
+    SRV{{"GameServer<br/>ConcurrentMap&lt;gameId, GameSession&gt;<br/><b>route by game id</b>"}}:::srv
+
+    T1 --> SRV
+    T2 --> SRV
+    T3 --> SRV
+
+    subgraph S1["GameSession &quot;g-1&quot;"]
+        direction TB
+        A1(["single-thread actor<br/>ttt-game-g-1"]):::actor
+        G1["Game g-1<br/>(Board, turn, status)"]:::game
+        A1 --> G1
+    end
+    subgraph S2["GameSession &quot;g-2&quot;"]
+        direction TB
+        A2(["single-thread actor<br/>ttt-game-g-2"]):::actor
+        G2["Game g-2<br/>(Board, turn, status)"]:::game
+        A2 --> G2
+    end
+
+    SRV -- "moves for g-1<br/>(serialized on one thread)" --> A1
+    SRV -- "moves for g-2" --> A2
+
+    NOTE["Each Game is touched by exactly ONE thread → no locks inside Game,<br/>no shared board across threads. Different games run truly in parallel.<br/>submitMove returns a CompletableFuture; illegal move → failed future."]:::note
+
+    S1 --> NOTE
+    S2 --> NOTE
+
+    classDef srv fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef actor fill:#e3f6e8,stroke:#2e7d32,color:#1b5e20;
+    classDef game fill:#e0f0ff,stroke:#0366d6,color:#023;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;

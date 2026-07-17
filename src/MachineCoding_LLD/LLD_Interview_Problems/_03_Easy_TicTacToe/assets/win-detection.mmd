@@ -1,0 +1,38 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    START(["A mark is placed at (r, c) — check only lines through it"]):::hdr
+
+    subgraph SCAN["LastMoveScanStrategy · O(K) · any K ≤ N"]
+        direction TB
+        S0["From (r, c) walk the 4 axes,<br/>both directions:<br/>→ horizontal · ↓ vertical · ↘ diag · ↗ anti-diag"]
+        S1["For each axis:<br/><b>run = 1 + fwd(same) + back(same)</b>"]
+        S2{"run ≥ K<br/>on any axis?"}
+        S0 --> S1 --> S2
+        S2 -- yes --> SWIN["WIN"]:::win
+        S2 -- no --> SNO["not a win"]:::no
+        SNOTE["Reads only neighbours of (r,c),<br/>never the origin → the same static<br/>completesLine() answers the bot's<br/>&quot;would this move win?&quot;"]:::note
+    end
+
+    subgraph CNT["RunningCounterStrategy · O(1) · requires K == N"]
+        direction TB
+        C0["X = +1, O = −1.<br/>Keep a signed sum per line."]
+        C1["On the move, update ≤ 4 counters:<br/>rowSum[r], colSum[c],<br/>diagSum (r==c), antiDiagSum (r+c==N−1)"]
+        C2{"|any touched<br/>counter| == N?"}
+        C0 --> C1 --> C2
+        C2 -- yes --> CWIN["WIN"]:::win
+        C2 -- no --> CNO["not a win"]:::no
+        CNOTE["±N means a full line of one symbol.<br/>Only detects full-length lines,<br/>so K must equal N (classic 3×3)."]:::note
+    end
+
+    START --> SCAN
+    START --> CNT
+
+    NEVER["Neither ever rescans the whole board — no O(N²)."]:::foot
+    SCAN --> NEVER
+    CNT --> NEVER
+
+    classDef hdr fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef win fill:#e3f6e8,stroke:#2e7d32,color:#1b5e20;
+    classDef no fill:#fdecea,stroke:#c62828,color:#8e0000;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;
+    classDef foot fill:#f5f5f5,stroke:#9e9e9e,color:#424242;

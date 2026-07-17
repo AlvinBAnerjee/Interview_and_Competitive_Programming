@@ -1,0 +1,117 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class Game {
+        <<Engine / Mediator>>
+        -Board board
+        -List~Player~ players
+        -List~GameObserver~ observers
+        -int currentIndex
+        -GameStatus status
+        -Player winner
+        +makeMove(Player, int, int) GameStatus
+        +playTurn() GameStatus
+        +play() GameStatus
+        +addObserver(GameObserver)
+    }
+
+    class Board {
+        -Symbol[][] grid
+        -int size
+        -int k
+        -int filled
+        +placeAndCheckWin(int,int,Symbol) boolean
+        +emptyCells() List~Move~
+        +at(int,int) Symbol
+        +inBounds(int,int) boolean
+        +isFull() boolean
+    }
+
+    class WinningStrategy {
+        <<interface>>
+        +isWinningMove(Board,int,int,Symbol) boolean
+    }
+    class RunningCounterStrategy {
+        <<O(1) · K==N>>
+    }
+    class LastMoveScanStrategy {
+        <<O(K) · any K>>
+        +completesLine(Board,int,int,Symbol)$ boolean
+    }
+
+    class Player {
+        -String name
+        -Symbol symbol
+        -PlayerStrategy strategy
+        +nextMove(Board) Move
+    }
+    class PlayerStrategy {
+        <<interface>>
+        +chooseMove(Board,Symbol) Move
+    }
+    class HumanPlayerStrategy
+    class RandomBotStrategy
+    class RuleBasedBotStrategy
+
+    class GameObserver {
+        <<interface>>
+        +onMove(Game,Player,Move)
+        +onGameOver(Game,Player)
+    }
+    class ConsoleGameObserver
+
+    class PlayerFactory {
+        <<factory>>
+        +human(...)$ Player
+        +randomBot(...)$ Player
+        +smartBot(...)$ Player
+    }
+
+    class GameServer {
+        <<hosts many games>>
+        -ConcurrentMap~String,GameSession~ sessions
+        +host(String, Game)
+        +submitMove(String,Player,int,int) CompletableFuture~GameStatus~
+    }
+    class GameSession {
+        -Game game
+        -ExecutorService actor
+    }
+
+    class Move {
+        <<record>>
+        +int row
+        +int col
+    }
+    class Symbol {
+        <<enum>>
+        X
+        O
+        EMPTY
+    }
+    class GameStatus {
+        <<enum>>
+        IN_PROGRESS
+        WIN
+        DRAW
+    }
+
+    WinningStrategy <|.. RunningCounterStrategy
+    WinningStrategy <|.. LastMoveScanStrategy
+    PlayerStrategy <|.. HumanPlayerStrategy
+    PlayerStrategy <|.. RandomBotStrategy
+    PlayerStrategy <|.. RuleBasedBotStrategy
+    GameObserver <|.. ConsoleGameObserver
+
+    Game *-- Board : owns
+    Game o-- Player : 2, alternating
+    Game o-- GameObserver : notifies
+    Board o-- WinningStrategy : delegates win check
+    Player o-- PlayerStrategy : picks move
+    RuleBasedBotStrategy ..> LastMoveScanStrategy : reuses completesLine
+    PlayerFactory ..> Player : creates
+    GameServer *-- GameSession : one per game
+    GameSession *-- Game : confines to 1 thread
+    Board ..> Move : emptyCells
+    Player ..> Symbol : marks with
