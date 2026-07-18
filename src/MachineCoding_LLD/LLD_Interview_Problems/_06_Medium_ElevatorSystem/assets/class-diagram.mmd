@@ -1,0 +1,90 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class ElevatorSystem {
+        <<Facade>>
+        -List~Elevator~ elevators
+        -DispatchStrategy dispatchStrategy
+        -ExecutorService pool
+        -ReentrantLock dispatchLock
+        +requestElevator(int, Direction) int
+        +pressFloor(int, int) void
+        +shutdown() void
+    }
+
+    class Elevator {
+        <<Receiver · State Context>>
+        -PriorityBlockingQueue~ElevatorCommand~ upStops
+        -PriorityBlockingQueue~ElevatorCommand~ downStops
+        -ReentrantLock lock
+        -Condition workAvailable
+        -volatile int currentFloor
+        -volatile Direction direction
+        -volatile ElevatorState state
+        +run() void
+        +submit(ElevatorCommand) void
+        +awaitWork() Direction
+        +stepToward(int) void
+        +openDoorsAndServe(Direction) void
+    }
+
+    class ElevatorState {
+        <<interface · State>>
+        +next(Elevator) ElevatorState
+    }
+    class IdleState
+    class MovingState
+    class DoorsOpenState
+
+    class ElevatorCommand {
+        <<interface · Command>>
+        +floor() int
+        +execute(Elevator) void
+    }
+    class VisitFloorCommand {
+        -int floor
+        -Runnable onArrive
+    }
+
+    class DispatchStrategy {
+        <<interface · Strategy>>
+        +choose(List~Elevator~, int, Direction) Elevator
+    }
+    class NearestCarStrategy
+    class LeastLoadStrategy
+
+    class SchedulingStrategy {
+        <<interface · Strategy>>
+        +decideNext(boolean, boolean, Direction) Direction
+    }
+    class LookSchedulingStrategy
+
+    class Direction {
+        <<enumeration>>
+        UP
+        DOWN
+        IDLE
+    }
+
+    ElevatorState <|.. IdleState
+    ElevatorState <|.. MovingState
+    ElevatorState <|.. DoorsOpenState
+    ElevatorCommand <|.. VisitFloorCommand
+    DispatchStrategy <|.. NearestCarStrategy
+    DispatchStrategy <|.. LeastLoadStrategy
+    SchedulingStrategy <|.. LookSchedulingStrategy
+
+    ElevatorSystem *-- Elevator : owns the fleet
+    ElevatorSystem o-- DispatchStrategy : injected
+    ElevatorSystem ..> VisitFloorCommand : creates on request
+
+    Elevator o-- ElevatorState : current
+    Elevator o-- SchedulingStrategy : injected
+    Elevator o-- ElevatorCommand : queued stops (up/down)
+    VisitFloorCommand ..> Elevator : execute(elevator)
+
+    IdleState ..> MovingState : work found
+    MovingState ..> DoorsOpenState : arrived
+    DoorsOpenState ..> MovingState : more stops
+    DoorsOpenState ..> IdleState : queues empty

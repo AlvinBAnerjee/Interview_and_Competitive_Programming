@@ -1,0 +1,84 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class SplitwiseService {
+        <<Facade>>
+        -ConcurrentMap~String,User~ users
+        -ConcurrentMap~String,Group~ groups
+        +addExpense(groupId, payerId, amount, SplitType, Map) Expense
+        +settleUp(groupId, from, to, amount) void
+        +getBalances(userId) Map~String,Long~
+        +simplifyDebts(groupId) List~Transaction~
+    }
+
+    class Group {
+        -Set~String~ memberIds
+        +balances() BalanceSheet
+        +recordExpense(Expense) void
+    }
+    class BalanceSheet {
+        -ConcurrentMap~PairKey,Long~ ledger
+        +record(debtor, creditor, cents) void
+        +settle(payer, payee, cents) void
+        +netBalances() Map~String,Long~
+        +balancesFor(user) Map~String,Long~
+    }
+    class PairKey {
+        <<canonical, sorted>>
+        +low String
+        +high String
+    }
+
+    class DebtSimplifier {
+        <<greedy min-transactions>>
+        +simplify(Map~String,Long~) List~Transaction~
+    }
+    class Transaction {
+        <<record>>
+        +from String
+        +to String
+        +cents long
+    }
+
+    class SplitStrategy {
+        <<interface · Strategy>>
+        +computeShares(totalCents, Map) Map~String,Long~
+    }
+    class EqualSplitStrategy
+    class ExactSplitStrategy
+    class PercentageSplitStrategy
+    class SplitFactory {
+        <<factory>>
+        +create(SplitType)$ SplitStrategy
+    }
+
+    class ExpenseObserver {
+        <<interface · Observer>>
+        +onExpenseAdded(Expense) void
+    }
+    class LoggingExpenseObserver
+    class Expense {
+        <<record>>
+        +Map~String,Long~ shares
+    }
+    class User {
+        <<record>>
+    }
+
+    SplitStrategy <|.. EqualSplitStrategy
+    SplitStrategy <|.. ExactSplitStrategy
+    SplitStrategy <|.. PercentageSplitStrategy
+    ExpenseObserver <|.. LoggingExpenseObserver
+
+    SplitwiseService *-- User : owns
+    SplitwiseService *-- Group : owns
+    SplitwiseService o-- DebtSimplifier : uses
+    SplitwiseService o-- ExpenseObserver : notifies
+    SplitwiseService ..> SplitFactory : gets strategy
+    Group *-- BalanceSheet : owns
+    Group *-- Expense : history
+    BalanceSheet ..> PairKey : keyed by
+    SplitFactory ..> SplitStrategy : creates
+    DebtSimplifier ..> Transaction : produces
+    Expense ..> SplitStrategy : shares computed by

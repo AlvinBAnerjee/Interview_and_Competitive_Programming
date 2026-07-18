@@ -1,0 +1,40 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    subgraph Producers["Many threads: hall calls + car calls"]
+        direction LR
+        T1["requestElevator(5, UP)"]
+        T2["pressFloor(2, 9)"]
+        T3["requestElevator(3, DOWN)"]
+        T4["pressFloor(1, 7)"]
+    end
+
+    LOCK{{"ElevatorSystem.dispatchLock<br/><b>guards choose() + submit() as ONE atomic step</b><br/>(hall calls only — car calls skip dispatch, go straight to submit)"}}:::lock
+
+    T1 --> LOCK
+    T3 --> LOCK
+    T2 -. "direct submit, no dispatch" .-> Q1
+    T4 -. "direct submit, no dispatch" .-> Q1
+
+    LOCK -->|"DispatchStrategy picks car #1"| Q1
+    LOCK -->|"DispatchStrategy picks car #2"| Q2
+
+    subgraph Car1["Elevator #1"]
+        Q1["upStops / downStops<br/>PriorityBlockingQueue, guarded by lock + Condition"]:::queue
+        C1["control-loop thread<br/>single consumer — state.next(this)"]:::consumer
+        Q1 --- C1
+    end
+    subgraph Car2["Elevator #2"]
+        Q2["upStops / downStops"]:::queue
+        C2["control-loop thread"]:::consumer
+        Q2 --- C2
+    end
+
+    NOTE["Each car owns its queue and exactly ONE consumer thread, so a stop can\nnever be dequeued twice — 'served exactly once' holds structurally, even\nwithout dispatchLock. The lock instead keeps the CHOOSE step consistent:\nwithout it, two hall calls racing on stale elevator state could both be\nscored against the same 'currently least-loaded' car. Idle cars block on\nCondition.await() — no busy-wait — and submit() wakes them via signalAll()."]:::note
+
+    C1 --> NOTE
+    C2 --> NOTE
+
+    classDef lock fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef queue fill:#e0f0ff,stroke:#0366d6,color:#023;
+    classDef consumer fill:#e3f6e8,stroke:#2e7d32,color:#1b5e20;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;

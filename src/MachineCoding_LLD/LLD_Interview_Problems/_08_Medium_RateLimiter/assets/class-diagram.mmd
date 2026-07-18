@@ -1,0 +1,66 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class RateLimiter {
+        <<Facade>>
+        -ConcurrentMap~String,ClientEntry~ clients
+        -Supplier~RateLimitStrategy~ strategyFactory
+        -TimeSource time
+        +allow(String) boolean
+        +evictIdle() int
+        +startBackgroundEviction(long) void
+    }
+    class ClientEntry {
+        -RateLimitStrategy strategy
+        -volatile long lastAccessNanos
+    }
+
+    class RateLimitStrategy {
+        <<interface · Strategy>>
+        +tryAcquire() boolean
+        +name() String
+    }
+    class TokenBucketStrategy {
+        <<CAS · AtomicReference~State~>>
+        -double capacity
+        -double refillPerNano
+    }
+    class FixedWindowStrategy {
+        <<CAS · AtomicReference~Window~>>
+        -long limit
+        -long windowNanos
+    }
+    class SlidingWindowStrategy {
+        <<CAS · AtomicReference~State~>>
+        -long limit
+        -long windowNanos
+    }
+
+    class RateLimiterFactory {
+        <<factory>>
+        +tokenBucket(long, double)$ RateLimiter
+        +fixedWindow(long, long)$ RateLimiter
+        +slidingWindow(long, long)$ RateLimiter
+    }
+
+    class TimeSource {
+        <<interface>>
+        +nanoTime() long
+    }
+    class ManualTimeSource
+
+    RateLimitStrategy <|.. TokenBucketStrategy
+    RateLimitStrategy <|.. FixedWindowStrategy
+    RateLimitStrategy <|.. SlidingWindowStrategy
+    TimeSource <|.. ManualTimeSource
+
+    RateLimiter *-- ClientEntry : one per client id
+    ClientEntry o-- RateLimitStrategy : own bucket
+    RateLimiter o-- TimeSource : injected clock
+    RateLimiter ..> RateLimitStrategy : creates via Supplier
+    TokenBucketStrategy ..> TimeSource : reads
+    FixedWindowStrategy ..> TimeSource : reads
+    SlidingWindowStrategy ..> TimeSource : reads
+    RateLimiterFactory ..> RateLimiter : builds
+    RateLimiterFactory ..> RateLimitStrategy : wires per-client supplier

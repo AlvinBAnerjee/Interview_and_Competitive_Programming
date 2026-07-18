@@ -92,6 +92,8 @@ runnable program:
 | 4 | [Thread-Safe Singleton](./_04_SolvedProblems/_04_ThreadSafeSingleton/PROBLEM.md) | Easy | Lazy init + visibility | `volatile` + double-checked locking, holder idiom, enum |
 | 5 | [Dining Philosophers](./_04_SolvedProblems/_05_DiningPhilosophers/PROBLEM.md) | Medium | Deadlock avoidance | Lock ordering, `tryLock`, `Semaphore` (waiter) |
 | 6 | [Rate Limiter (Token Bucket)](./_04_SolvedProblems/_06_RateLimiter/PROBLEM.md) | Medium | Atomic counters under load | `AtomicLong`/CAS, `synchronized` refill |
+| 7 | [FizzBuzz Multithreaded](./_04_SolvedProblems/_07_FizzBuzzMultithreaded/PROBLEM.md) | Medium | N-way turn-taking (turn = predicate on shared state) | `Lock` + `Condition`, shared counter |
+| 8 | [Building H2O (molecule assembly)](./_04_SolvedProblems/_08_H2OMolecule/PROBLEM.md) | Medium | Group rendezvous — gather 2H+1O per batch | Counting `Semaphore`s + `CyclicBarrier` |
 
 > Also relevant (in the LLD folder): [Thread-safe **LRU Cache**](../LLD_Interview_Problems/04_Easy_LRUCache/PROBLEM.md)
 > and [**Rate Limiter** LLD spec](../LLD_Interview_Problems/08_Medium_RateLimiter/PROBLEM.md).

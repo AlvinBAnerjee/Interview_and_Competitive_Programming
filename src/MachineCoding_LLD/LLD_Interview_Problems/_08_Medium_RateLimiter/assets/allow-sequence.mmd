@@ -1,0 +1,38 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Client
+    participant RL as RateLimiter
+    participant Map as clients · ConcurrentHashMap
+    participant St as RateLimitStrategy
+    participant Ref as AtomicReference~State~
+    participant T as TimeSource
+
+    Client->>RL: allow("clientId")
+    RL->>Map: computeIfAbsent(id, k -> new strategy)
+    Note over Map: lazy, race-free per-client state
+    Map-->>RL: ClientEntry
+    RL->>RL: entry.lastAccessNanos = now  (for eviction)
+    RL->>St: tryAcquire()
+
+    loop CAS until success or reject
+        St->>Ref: get()  (current snapshot)
+        Ref-->>St: state
+        St->>T: nanoTime()
+        T-->>St: now
+        St->>St: refill / roll window from elapsed time
+        alt over the limit
+            St-->>RL: false
+        else permit available
+            St->>Ref: compareAndSet(current, next)
+            alt CAS won
+                Ref-->>St: true
+                St-->>RL: true
+            else CAS lost
+                Ref-->>St: false
+                Note over St: retry with fresh snapshot
+            end
+        end
+    end
+
+    RL-->>Client: allowed? (true / false)

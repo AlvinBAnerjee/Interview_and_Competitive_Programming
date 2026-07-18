@@ -1,0 +1,37 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Caller as Hall button / cabin panel
+    participant ES as ElevatorSystem
+    participant DS as DispatchStrategy
+    participant E as Elevator (chosen car)
+    participant Q as upStops / downStops
+    participant W as control-loop thread
+
+    Caller->>ES: requestElevator(floor, dir, onArrive)
+    activate ES
+    ES->>ES: dispatchLock.lock()
+    ES->>DS: choose(elevators, floor, dir)
+    DS-->>ES: bestCar
+    ES->>E: submit(new VisitFloorCommand(floor, onArrive))
+    activate E
+    E->>Q: offer(command)  [up if floor>current, down if floor<current]
+    E->>E: workAvailable.signalAll()
+    deactivate E
+    ES->>ES: dispatchLock.unlock()
+    ES-->>Caller: carId
+    deactivate ES
+
+    Note over E,W: W is a separate thread, running Elevator.run() the whole time
+
+    W->>E: state.next(elevator)  (IdleState, parked)
+    E-->>W: wakes — awaitWork() returns a direction
+    loop until arrived
+        W->>E: state.next(elevator)  (MovingState)
+        E->>Q: peek()  (nearest stop this direction)
+        E->>E: stepToward(target)  — one floor, one tick
+    end
+    W->>E: state.next(elevator)  (DoorsOpenState)
+    E->>Q: poll() + execute(elevator)  for every command at this floor
+    E->>Caller: onArrive.run()
+    E->>E: dwellAtDoors(), then decide next direction

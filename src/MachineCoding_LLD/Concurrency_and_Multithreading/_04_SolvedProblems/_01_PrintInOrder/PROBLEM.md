@@ -7,6 +7,8 @@ Two threads must print `foo` and `bar` **alternately**, `n` times each, always i
 Variants interviewers escalate to:
 - **ZeroEvenOdd**: 3 threads print `0`, odd, `0`, even → `0102030405...`.
 - **Print in Order** (LeetCode 1114): force `first()` → `second()` → `third()` across 3 threads.
+- **FizzBuzz Multithreaded** (LeetCode 1195): the full **N-way** generalization where the next
+  thread is chosen by a predicate on shared state — see [`_07_FizzBuzzMultithreaded`](../_07_FizzBuzzMultithreaded/PROBLEM.md).
 
 ## Why it's asked
 Tests whether you can **signal between threads** correctly — the core of all coordination. The trap

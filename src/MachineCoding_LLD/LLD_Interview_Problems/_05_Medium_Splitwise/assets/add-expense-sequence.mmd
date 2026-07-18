@@ -1,0 +1,26 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'15px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Client
+    participant Svc as SplitwiseService
+    participant F as SplitFactory
+    participant St as SplitStrategy
+    participant BS as BalanceSheet
+    participant Obs as ExpenseObserver
+
+    Client->>Svc: addExpense(group, payer, amount, type, input)
+    Svc->>Svc: validate group, payer, participants, amount
+    Svc->>F: create(type)
+    F-->>Svc: SplitStrategy
+    Svc->>St: computeShares(totalCents, input)
+    Note over St: shares sum EXACTLY to total<br/>(leftover cents distributed deterministically)
+    St-->>Svc: {participant → cents}
+
+    loop each participant (payer owes nothing)
+        Svc->>BS: record(participant, payer, share)
+        Note over BS: atomic merge on one PairKey<br/>— lock-free, self-balancing
+    end
+
+    Svc->>Svc: build Expense, append to group history
+    Svc->>Obs: onExpenseAdded(expense)
+    Svc-->>Client: Expense

@@ -23,10 +23,10 @@ preparation, ordered by difficulty. Each folder contains a `PROBLEM.md` with:
 | 2 | [Vending Machine](./_02_Easy_VendingMachine/PROBLEM.md) · ✅ [**Solution**](./_02_Easy_VendingMachine/SOLUTION.md) | Easy | 🟢 Low — single-user state machine | State, Strategy |
 | 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) · ✅ [**Solution**](./_03_Easy_TicTacToe/SOLUTION.md) | Easy | 🟢 Low — one game turn-based; 🟡 across many games (actor per game) | Strategy, Factory, Observer |
 | 4 | [LRU Cache](./_04_Easy_LRUCache/PROBLEM.md) · ✅ [**Solution**](./_04_Easy_LRUCache/SOLUTION.md) | Easy | 🔴 **High** — thread-safe get/put under contention (lock striping) | Strategy, Proxy, Observer, Factory |
-| 5 | [Splitwise](./_05_Medium_Splitwise/PROBLEM.md) | Medium | 🟡 Medium — concurrent expense writes, balance consistency | Strategy, Observer |
-| 6 | [Elevator System](./_06_Medium_ElevatorSystem/PROBLEM.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |
+| 5 | [Splitwise](./_05_Medium_Splitwise/PROBLEM.md) · ✅ [**Solution**](./_05_Medium_Splitwise/SOLUTION.md) | Medium | 🟡 Medium — lock-free ledger, conserves to zero; greedy debt simplification | Strategy, Factory, Observer, Facade |
+| 6 | [Elevator System](./_06_Medium_ElevatorSystem/PROBLEM.md) · ✅ [**Solution**](./_06_Medium_ElevatorSystem/SOLUTION.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |
 | 7 | [BookMyShow](./_07_Medium_BookMyShow/PROBLEM.md) | Medium | 🔴 **High** — seat locking, no double-booking | Singleton, Strategy, Observer |
-| 8 | [Rate Limiter](./_08_Medium_RateLimiter/PROBLEM.md) | Medium | 🔴 **High** — atomic counters, sliding window under load | Strategy, Factory |
+| 8 | [Rate Limiter](./_08_Medium_RateLimiter/PROBLEM.md) · ✅ [**Solution**](./_08_Medium_RateLimiter/SOLUTION.md) | Medium | 🔴 **High** — lock-free CAS per client, no global lock | Strategy, Factory, Facade |
 | 9 | [Cab Booking System](./_09_Hard_CabBookingSystem/PROBLEM.md) | Hard | 🔴 **High** — driver matching, concurrent ride requests | Strategy, Observer, State |
 | 10 | [Stock Exchange / Order Matching](./_10_Hard_StockExchange/PROBLEM.md) | Hard | 🔴 **Critical** — lock-free/low-latency matching engine | Strategy, Observer, Command |
 

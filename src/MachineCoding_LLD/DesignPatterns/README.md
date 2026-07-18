@@ -21,6 +21,7 @@ six arrows every diagram below uses.
 | 10 | [Strategy](_10_StrategyDesignPattern/README.md) | Behavioral | payment methods |
 | 11 | [Observer](_11_ObserverDesignPattern/README.md) | Behavioral | stock ticker |
 | 12 | [State](_12_State/README.md) | Behavioral | turnstile |
+| 13 | [Command](_13_Command/README.md) | Behavioral | remote control + undo |
 
 Each folder's `README.md` embeds pre-rendered **PNG** diagrams (`assets/README-1.png` =
 standard, `assets/README-2.png` = example) so they display everywhere — GitHub, browsers,
