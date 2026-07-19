@@ -43,24 +43,36 @@ public class TokenBucketRateLimiter {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        // 5 tokens capacity, refilling 5/sec. Fire 20 concurrent requests immediately:
-        // ~5 should pass (initial burst), the rest rejected until tokens refill.
+        // 5 tokens capacity, refilling 5/sec.
         TokenBucketRateLimiter limiter = new TokenBucketRateLimiter(5, 5);
-        AtomicInteger allowed = new AtomicInteger();
-        AtomicInteger rejected = new AtomicInteger();
 
-        int requests = 20;
+        // Round 1: fire 20 concurrent requests immediately -> ~5 pass (initial
+        // burst, bucket starts full), the rest are rejected and drain it to 0.
+        int allowed1 = fireBurst(limiter, 20);
+        System.out.println("Round 1 allowed: " + allowed1 + " (expected ~5 burst)");
+
+        // Sleeping here lets tokens refill (5/sec), independent of round 1's
+        // requests -- a uniform sleep *inside* the racing threads wouldn't
+        // do this, since every thread would still hit tryAcquire() at the
+        // same instant and get capped at `capacity` regardless of the delay.
+        Thread.sleep(2000);
+
+        // Round 2: bucket has refilled (capped at capacity=5), so another
+        // ~5 should be allowed -- proving refill actually happened.
+        int allowed2 = fireBurst(limiter, 20);
+        System.out.println("Round 2 allowed: " + allowed2 + " (expected ~5 burst, refill worked)");
+    }
+
+    private static int fireBurst(TokenBucketRateLimiter limiter, int requests) throws InterruptedException {
+        AtomicInteger allowed = new AtomicInteger();
         Thread[] ts = new Thread[requests];
         for (int i = 0; i < requests; i++) {
             ts[i] = new Thread(() -> {
                 if (limiter.tryAcquire()) allowed.incrementAndGet();
-                else rejected.incrementAndGet();
             });
             ts[i].start();
         }
         for (Thread t : ts) t.join();
-
-        System.out.println("Allowed:  " + allowed.get() + " (expected ~5 burst)");
-        System.out.println("Rejected: " + rejected.get());
+        return allowed.get();
     }
 }

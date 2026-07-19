@@ -94,6 +94,8 @@ runnable program:
 | 6 | [Rate Limiter (Token Bucket)](./_04_SolvedProblems/_06_RateLimiter/PROBLEM.md) | Medium | Atomic counters under load | `AtomicLong`/CAS, `synchronized` refill |
 | 7 | [FizzBuzz Multithreaded](./_04_SolvedProblems/_07_FizzBuzzMultithreaded/PROBLEM.md) | Medium | N-way turn-taking (turn = predicate on shared state) | `Lock` + `Condition`, shared counter |
 | 8 | [Building H2O (molecule assembly)](./_04_SolvedProblems/_08_H2OMolecule/PROBLEM.md) | Medium | Group rendezvous — gather 2H+1O per batch | Counting `Semaphore`s + `CyclicBarrier` |
+| 9 | [Multithreaded Web Crawler](./_04_SolvedProblems/_09_WebCrawlerMultithreaded/PROBLEM.md) | Medium | Thread pool + concurrent dedup + dynamic termination | `ExecutorService`, `ConcurrentHashMap.newKeySet`, `AtomicInteger` counter |
+| 10 | [Thread Pool (from scratch)](./_04_SolvedProblems/_10_CustomThreadPool/PROBLEM.md) | Medium | *Be* the executor — worker lifecycle & graceful shutdown | Worker threads + `BlockingQueue` + `volatile` flag |
 
 > Also relevant (in the LLD folder): [Thread-safe **LRU Cache**](../LLD_Interview_Problems/04_Easy_LRUCache/PROBLEM.md)
 > and [**Rate Limiter** LLD spec](../LLD_Interview_Problems/08_Medium_RateLimiter/PROBLEM.md).
