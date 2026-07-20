@@ -1,0 +1,32 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'13px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    IN["Incoming: BUY 12 @ 101 (aggressor)"]:::in
+
+    subgraph Book["OrderBook — price-time priority"]
+        direction TB
+        subgraph Asks["ASKS  (TreeMap ascending -> best = lowest)"]
+            direction TB
+            A101["101 : [ s1 qty10 ]  ->  [ s2 qty5 ]   (FIFO: s1 older)"]:::ask
+            A102["102 : [ s3 qty8 ]"]:::ask
+        end
+        subgraph Bids["BIDS  (TreeMap descending -> best = highest)"]
+            direction TB
+            B100["100 : [ b2 qty4 ]"]:::bid
+            B99["99 : [ b1 qty7 ]"]:::bid
+        end
+    end
+
+    IN -->|"1. best ask = 101 <= 101, cross"| A101
+    A101 -->|"2. fill s1 fully (10), then s2 (2) -- time priority"| T["Trades:\nT1  10 @ 101  (sell s1)\nT2   2 @ 101  (sell s2)\nexecuted at MAKER price 101"]:::trade
+    T -->|"3. aggressor filled (12) -> nothing rests\n(if it had leftover, a LIMIT would rest as a bid)"| DONE["s2 now 3 left @101; 102 & bids untouched"]:::done
+
+    NOTE["Price priority: always hit the best opposite price first (101 before 102).\nTime priority: within a level, the FIFO head fills first (s1 before s2).\nMarket order: same walk but ignores the price bound and never rests its remainder.\nBest bid/ask is O(1) via TreeMap.firstEntry; level insert/remove is O(log n)."]:::note
+
+    DONE --> NOTE
+
+    classDef in fill:#e3f6e8,stroke:#2e7d32,color:#1b5e20;
+    classDef ask fill:#fdecea,stroke:#c62828,color:#8e1b1b;
+    classDef bid fill:#e0f0ff,stroke:#0366d6,color:#023;
+    classDef trade fill:#fff3e0,stroke:#ef6c00,color:#7a3b00;
+    classDef done fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;

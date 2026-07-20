@@ -1,0 +1,27 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}}}%%
+stateDiagram-v2
+    direction LR
+
+    [*] --> AVAILABLE
+
+    AVAILABLE --> HELD: holdSeats() — compute() installs SeatLock
+
+    HELD --> BOOKED: confirmBooking() — payment ok, markBooked()
+    HELD --> AVAILABLE: TTL expires / payment declined / released
+
+    BOOKED --> [*]: terminal (sold)
+
+    note right of HELD
+        Transient — lives ONLY as a
+        SeatLock in the lock provider,
+        never as a field on ShowSeat.
+        So expiry needs no cleanup:
+        the lock simply lapses.
+    end note
+
+    note right of BOOKED
+        The only durable seat state:
+        ShowSeat.booked = true.
+        Set while still holding the lock,
+        then the lock is released.
+    end note

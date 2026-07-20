@@ -1,0 +1,29 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}}}%%
+stateDiagram-v2
+    direction LR
+
+    [*] --> REQUESTED
+
+    REQUESTED --> DRIVER_ASSIGNED: driver claimed (tryClaim)
+    REQUESTED --> CANCELLED: no driver / rider cancels
+
+    DRIVER_ASSIGNED --> STARTED: driver picks rider up
+    DRIVER_ASSIGNED --> CANCELLED: cancel -> release driver
+
+    STARTED --> COMPLETED: drop-off -> release driver, final fare
+    STARTED --> CANCELLED: cancel -> release driver
+
+    COMPLETED --> [*]
+    CANCELLED --> [*]
+
+    note right of DRIVER_ASSIGNED
+        transitionTo() is synchronized:
+        a rider-cancel and a driver-start
+        can race; only one wins.
+    end note
+
+    note right of COMPLETED
+        Leaving ASSIGNED for any terminal
+        state runs driver.release()
+        (ASSIGNED -> AVAILABLE) exactly once.
+    end note

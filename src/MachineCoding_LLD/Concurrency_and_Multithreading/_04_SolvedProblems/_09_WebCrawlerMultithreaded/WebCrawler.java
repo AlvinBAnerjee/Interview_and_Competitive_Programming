@@ -91,15 +91,18 @@ public class WebCrawler {
     public static void main(String[] args) {
         // A tiny fake web: news.yahoo.com is one host, news.google.com another.
         Map<String, List<String>> web = new HashMap<>();
-        web.put("http://news.yahoo.com/news", Arrays.asList(
-                "http://news.yahoo.com/news",           // self-link (dedup'd)
-                "http://news.yahoo.com/tech",
+        web.put("http://news.yahoo.com/news",
+                Arrays.asList(
+                    "http://news.yahoo.com/news",           // self-link (dedup'd)
+                    "http://news.yahoo.com/tech",
                 "http://news.google.com/other"));        // different host -> skipped
-        web.put("http://news.yahoo.com/tech", Arrays.asList(
-                "http://news.yahoo.com/sports",
-                "http://news.yahoo.com/news"));           // back-edge (dedup'd)
-        web.put("http://news.yahoo.com/sports", Arrays.asList(
-                "http://news.yahoo.com/tech"));           // cycle (dedup'd)
+        web.put("http://news.yahoo.com/tech",
+                    Arrays.asList(
+                    "http://news.yahoo.com/sports",
+                    "http://news.yahoo.com/news"));           // back-edge (dedup'd)
+        web.put("http://news.yahoo.com/sports",
+                    Arrays.asList(
+                    "http://news.yahoo.com/tech"));           // cycle (dedup'd)
 
         HtmlParser parser = url -> {
             try { Thread.sleep(50); } catch (InterruptedException ignored) {} // simulate latency

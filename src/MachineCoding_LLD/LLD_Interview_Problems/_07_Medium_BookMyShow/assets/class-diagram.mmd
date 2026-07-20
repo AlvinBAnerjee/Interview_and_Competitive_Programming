@@ -1,0 +1,133 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class BookMyShowService {
+        <<Facade>>
+        -Map~String,Show~ showsById
+        -SeatLockProvider lockProvider
+        -PricingStrategy pricingStrategy
+        -Duration holdTtl
+        -List~BookingObserver~ observers
+        -ScheduledExecutorService reaper
+        +searchShows(movieId, cityId) List~Show~
+        +getAvailability(showId) SeatMap
+        +holdSeats(showId, seatIds, userId) LockToken
+        +confirmBooking(LockToken, PaymentStrategy) Booking
+    }
+
+    class SeatLockProvider {
+        <<interface>>
+        +lockSeats(showId, seatIds, userId, ttl) void
+        +unlockSeats(showId, seatIds, userId) void
+        +isValidLock(showId, seatIds, userId) boolean
+        +isHeld(showId, seatId) boolean
+        +reapExpired() List~ExpiredHold~
+    }
+    class InMemorySeatLockProvider {
+        -ConcurrentHashMap~String,SeatLock~ locks
+        +claim via compute() = atomic CAS
+    }
+    class SeatLock {
+        <<record>>
+        +String userId
+        +Instant expiresAt
+        +isExpired() boolean
+    }
+    class LockToken {
+        <<record>>
+        +String showId
+        +List~String~ seatIds
+        +String userId
+        +Instant expiresAt
+    }
+    class ExpiredHold {
+        <<record>>
+    }
+
+    class PricingStrategy {
+        <<interface · Strategy>>
+        +priceFor(Show, List~Seat~) long
+    }
+    class CategoryPricingStrategy
+
+    class PaymentStrategy {
+        <<interface · Strategy>>
+        +pay(amountPaise) PaymentResult
+    }
+    class CreditCardPayment
+    class UpiPayment
+
+    class BookingObserver {
+        <<interface · Observer>>
+        +onSeatsHeld(...) void
+        +onBookingConfirmed(Booking) void
+        +onHoldExpired(ExpiredHold) void
+    }
+    class LoggingBookingObserver
+
+    class Show {
+        -Map~String,ShowSeat~ showSeats
+        -long basePricePaise
+    }
+    class ShowSeat {
+        -volatile boolean booked
+        +markBooked() void
+    }
+    class Seat {
+        <<record>>
+        +String id
+        +SeatCategory category
+    }
+    class Screen
+    class Theatre
+    class City {
+        <<record>>
+    }
+    class Movie {
+        <<record>>
+    }
+    class Booking
+    class SeatMap
+    class SeatCategory {
+        <<enumeration>>
+        SILVER
+        GOLD
+        RECLINER
+    }
+    class SeatStatus {
+        <<enumeration>>
+        AVAILABLE
+        HELD
+        BOOKED
+    }
+
+    SeatLockProvider <|.. InMemorySeatLockProvider
+    PricingStrategy  <|.. CategoryPricingStrategy
+    PaymentStrategy  <|.. CreditCardPayment
+    PaymentStrategy  <|.. UpiPayment
+    BookingObserver  <|.. LoggingBookingObserver
+
+    BookMyShowService o-- SeatLockProvider : injected
+    BookMyShowService o-- PricingStrategy : injected
+    BookMyShowService o-- BookingObserver : notifies 0..*
+    BookMyShowService o-- Show : catalog
+    BookMyShowService ..> PaymentStrategy : uses per booking
+    BookMyShowService ..> LockToken : issues
+    BookMyShowService ..> Booking : creates
+    BookMyShowService ..> SeatMap : creates
+
+    InMemorySeatLockProvider o-- SeatLock : one per held seat
+    InMemorySeatLockProvider ..> ExpiredHold : emits
+
+    Show *-- ShowSeat : owns per-seat state
+    Show o-- Movie
+    Show o-- Screen
+    Show o-- Theatre
+    Theatre o-- City
+    Theatre *-- Screen
+    Screen *-- Seat : layout
+    ShowSeat o-- Seat
+    Seat o-- SeatCategory
+    Booking o-- Seat
+    SeatMap o-- SeatStatus

@@ -1,0 +1,28 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'13px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Client
+    participant X as Exchange
+    participant Q as Queue
+    participant W as Matcher
+    participant St as Strategy
+    participant B as OrderBook
+    participant Pub as Publisher
+    participant L as Listeners
+
+    Client->>X: placeOrder order
+    X->>Q: enqueue PlaceOrderCommand with future
+    Note over X,Q: producer returns, then client blocks on the future
+
+    Note over W,B: matcher thread is the only thread touching the book
+    W->>Q: dequeue command
+    W->>St: match book and order
+    St->>B: read best opposite level
+    St->>B: fill resting orders FIFO then remove filled
+    St->>B: rest remainder for LIMIT only
+    St-->>W: trades
+
+    W->>Pub: publish trades off thread
+    Pub-->>L: onTrade async never blocks matching
+    W->>X: complete the future with trades
+    X-->>Client: return trades as join unblocks

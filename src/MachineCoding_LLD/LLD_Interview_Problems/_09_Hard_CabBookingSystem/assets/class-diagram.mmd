@@ -1,0 +1,125 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class CabBookingService {
+        <<Facade>>
+        -LocationService locationService
+        -DriverMatchingStrategy matchingStrategy
+        -PricingStrategy pricingStrategy
+        -Map~String,Driver~ drivers
+        -Map~String,Ride~ rides
+        -List~RideObserver~ observers
+        +requestRide(riderId, pickup, drop, type) Ride
+        +updateDriverLocation(driverId, loc) void
+        +startRide(rideId) void
+        +completeRide(rideId) void
+        +cancelRide(rideId) void
+    }
+
+    class LocationService {
+        <<interface>>
+        +updateLocation(driverId, loc) void
+        +nearbyDriverIds(center, radius) List~String~
+        +locationOf(driverId) Location
+    }
+    class GridLocationService {
+        -Map~Long,Set~ cellToDrivers
+        -Map~String,Location~ driverLocations
+    }
+
+    class DriverMatchingStrategy {
+        <<interface · Strategy>>
+        +rank(List~Candidate~) List~Candidate~
+    }
+    class NearestDriverStrategy
+    class HighestRatedDriverStrategy
+    class Candidate {
+        <<record>>
+        +Driver driver
+        +double distanceToPickup
+    }
+
+    class PricingStrategy {
+        <<interface · Strategy>>
+        +estimatePaise(pickup, drop, type) long
+    }
+    class DistanceBasedPricingStrategy {
+        -long baseFarePaise
+        -long perKmPaise
+        -double surgeMultiplier
+    }
+
+    class RideObserver {
+        <<interface · Observer>>
+        +onDriverAssigned(Ride) void
+        +onRideCompleted(Ride) void
+        +onNoDriverFound(riderId) void
+    }
+    class LoggingRideObserver
+
+    class Driver {
+        -AtomicReference~DriverStatus~ status
+        -volatile Location location
+        -double rating
+        +tryClaim() boolean
+        +release() void
+    }
+    class Ride {
+        -volatile RideState state
+        -volatile Driver driver
+        -long farePaise
+        +transitionTo(RideState) void
+    }
+    class Rider {
+        <<record>>
+    }
+    class Location {
+        <<record>>
+        +distanceTo(Location) double
+    }
+    class RideState {
+        <<enumeration · State>>
+        REQUESTED
+        DRIVER_ASSIGNED
+        STARTED
+        COMPLETED
+        CANCELLED
+    }
+    class DriverStatus {
+        <<enumeration>>
+        OFFLINE
+        AVAILABLE
+        ASSIGNED
+    }
+    class RideType {
+        <<enumeration>>
+        POOL
+        REGULAR
+        PREMIUM
+    }
+
+    LocationService <|.. GridLocationService
+    DriverMatchingStrategy <|.. NearestDriverStrategy
+    DriverMatchingStrategy <|.. HighestRatedDriverStrategy
+    PricingStrategy <|.. DistanceBasedPricingStrategy
+    RideObserver <|.. LoggingRideObserver
+
+    CabBookingService o-- LocationService : injected
+    CabBookingService o-- DriverMatchingStrategy : injected
+    CabBookingService o-- PricingStrategy : injected
+    CabBookingService o-- RideObserver : notifies 0..*
+    CabBookingService o-- Driver : registry
+    CabBookingService *-- Ride : owns
+    CabBookingService ..> Candidate : builds
+
+    DriverMatchingStrategy ..> Candidate : ranks
+    Candidate o-- Driver
+
+    Ride o-- Rider
+    Ride o-- Driver : assigned
+    Ride o-- RideState : current
+    Ride o-- RideType
+    Ride o-- Location : pickup/drop
+    Driver o-- DriverStatus : AtomicReference
+    Driver o-- Location

@@ -1,0 +1,39 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'13px'}}}%%
+sequenceDiagram
+    autonumber
+    actor Rider
+    participant S as CabBookingService
+    participant L as LocationService
+    participant M as MatchingStrategy
+    participant D as Driver (candidate)
+    participant P as PricingStrategy
+    participant O as Observers
+
+    Rider->>S: requestRide(pickup, drop, type)
+    S->>L: nearbyDriverIds(pickup, radius)
+    L-->>S: [d1, d2, ...]  (lock-free read)
+    Note right of S: filter AVAILABLE, attach distance -> List<Candidate>
+    S->>M: rank(candidates)
+    M-->>S: candidates best-first
+
+    loop over ranked candidates until one is claimed
+        S->>D: tryClaim()  (CAS AVAILABLE -> ASSIGNED)
+        alt CAS wins
+            D-->>S: true
+            Note right of S: stop looping, this driver is ours
+        else CAS lost to another rider
+            D-->>S: false
+            Note right of S: try the NEXT candidate
+        end
+    end
+
+    alt a driver was claimed
+        S->>P: estimatePaise(pickup, drop, type)
+        P-->>S: fare
+        Note right of S: new Ride, transitionTo(DRIVER_ASSIGNED)
+        S->>O: onDriverAssigned(ride)
+        S-->>Rider: Ride(DRIVER_ASSIGNED)
+    else every candidate was taken / none in range
+        S->>O: onNoDriverFound(riderId)
+        S-->>Rider: throw NoDriverAvailableException
+    end

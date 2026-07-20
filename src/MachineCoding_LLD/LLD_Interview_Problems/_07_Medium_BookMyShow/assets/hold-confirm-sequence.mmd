@@ -1,0 +1,44 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'13px'}}}%%
+sequenceDiagram
+    autonumber
+    actor User
+    participant S as BookMyShowService
+    participant L as SeatLockProvider
+    participant Sh as Show
+    participant P as PricingStrategy
+    participant Pay as PaymentStrategy
+    participant O as Observers
+
+    Note over User,O: Phase 1 — HOLD (temporary, all-or-nothing)
+    User->>S: holdSeats(show, [A1,A2], alice)
+    S->>Sh: showSeat(id).isBooked()?  (fast fail)
+    S->>L: lockSeats(show, [A1,A2], alice, ttl)
+    Note right of L: per seat: compute(key) installs a<br/>SeatLock iff free/expired — ATOMIC.<br/>any conflict → rollback all → throw
+    L-->>S: ok
+    S->>Sh: re-check isBooked() (closes TOCTOU)
+    S->>O: onSeatsHeld(...)
+    S-->>User: LockToken(expiresAt)
+
+    Note over User,O: Phase 2 — CONFIRM (validate → pay → finalize)
+    User->>S: confirmBooking(token, payment)
+    S->>L: isValidLock(seats, alice)?  &  token not expired
+    alt hold lapsed / not owned
+        L-->>S: false
+        S-->>User: throw InvalidLockException
+    else still holds a live lock
+        L-->>S: true
+        S->>P: priceFor(show, seats)
+        P-->>S: amount
+        S->>Pay: pay(amount)
+        alt declined
+            Pay-->>S: declined
+            S->>L: unlockSeats(seats, alice)
+            S-->>User: throw PaymentFailedException
+        else approved
+            Pay-->>S: ok(txnId)
+            S->>Sh: markBooked(A1,A2)  (durable, still holding lock)
+            S->>L: unlockSeats(seats, alice)
+            S->>O: onBookingConfirmed(booking)
+            S-->>User: Booking(CONFIRMED)
+        end
+    end

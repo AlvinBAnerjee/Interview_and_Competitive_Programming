@@ -1,0 +1,43 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+flowchart TB
+    subgraph Clients["Many client threads (order gateway)"]
+        direction LR
+        C1["placeOrder ACME"]
+        C2["cancelOrder ACME"]
+        C3["placeOrder GLOBEX"]
+        C4["placeOrder GLOBEX"]
+    end
+
+    C1 -->|"put(cmd)"| QA
+    C2 -->|"put(cmd)"| QA
+    C3 -->|"put(cmd)"| QB
+    C4 -->|"put(cmd)"| QB
+
+    subgraph ShardA["Engine: ACME"]
+        QA["BlockingQueue&lt;EngineCommand&gt;"]:::queue
+        WA["single matcher thread"]:::writer
+        BA["OrderBook (NO locks)"]:::book
+        QA --> WA --> BA
+    end
+    subgraph ShardB["Engine: GLOBEX"]
+        QB["BlockingQueue&lt;EngineCommand&gt;"]:::queue
+        WB["single matcher thread"]:::writer
+        BB["OrderBook (NO locks)"]:::book
+        QB --> WB --> BB
+    end
+
+    WA -->|"trades"| PUB["Trade publisher thread<br/>(async fan-out)"]:::pub
+    WB -->|"trades"| PUB
+    PUB --> SUBS["TradeListeners / market-data feed"]:::subs
+
+    NOTE["SINGLE-WRITER PER SYMBOL: every mutation AND read of one book goes through one\nqueue drained by one thread, so the book itself needs zero locks -- deterministic,\ncache-friendly, no contention. This beats a shared lock-guarded book, where every\norder contends on the same lock and ordering/fairness get murky.\n\nSHARD BY SYMBOL: ACME and GLOBEX are fully independent engines/threads, so unrelated\nsymbols scale out across cores. ASYNC PUBLISH: trades fan out on a separate thread so\na slow subscriber never stalls matching. For ultra-low latency, swap the BlockingQueue\nfor a ring buffer (LMAX Disruptor): no locks, no GC churn, mechanical sympathy."]:::note
+
+    BA --> NOTE
+    BB --> NOTE
+
+    classDef queue fill:#eef2ff,stroke:#3949ab,color:#1a237e;
+    classDef writer fill:#e3f6e8,stroke:#2e7d32,color:#1b5e20;
+    classDef book fill:#e0f0ff,stroke:#0366d6,color:#023;
+    classDef pub fill:#fff3e0,stroke:#ef6c00,color:#7a3b00;
+    classDef subs fill:#f3e5f5,stroke:#8e24aa,color:#4a148c;
+    classDef note fill:#fff8e1,stroke:#f9a825,color:#7a5a00;

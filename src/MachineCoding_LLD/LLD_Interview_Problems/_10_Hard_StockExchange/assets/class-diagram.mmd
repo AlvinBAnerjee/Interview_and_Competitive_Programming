@@ -1,0 +1,117 @@
+%%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'14px'}, 'flowchart': {'curve':'basis'}}}%%
+classDiagram
+    direction LR
+
+    class Exchange {
+        <<Facade>>
+        -Map~String,MatchingEngine~ engines
+        -MatchingStrategy strategy
+        -List~TradeListener~ listeners
+        -ExecutorService publisher
+        +listSymbol(symbol) void
+        +placeOrder(Order) List~Trade~
+        +cancelOrder(orderId) boolean
+        +getBook(symbol, depth) OrderBookSnapshot
+    }
+
+    class MatchingEngine {
+        <<single writer per symbol>>
+        -OrderBook book
+        -BlockingQueue~EngineCommand~ queue
+        -Thread worker
+        +submit(EngineCommand) void
+        +process(Order) List~Trade~
+        +cancel(orderId) boolean
+        +snapshot(depth) OrderBookSnapshot
+    }
+
+    class EngineCommand {
+        <<interface · Command>>
+        +execute(MatchingEngine) void
+    }
+    class PlaceOrderCommand {
+        -Order order
+        -CompletableFuture~List~ result
+    }
+    class CancelOrderCommand
+    class SnapshotCommand
+
+    class MatchingStrategy {
+        <<interface · Strategy>>
+        +match(OrderBook, Order, idGen) List~Trade~
+    }
+    class PriceTimePriorityStrategy
+
+    class OrderBook {
+        -TreeMap~Long,PriceLevel~ bids
+        -TreeMap~Long,PriceLevel~ asks
+        -Map~String,Order~ restingIndex
+        +bestBidLevel() PriceLevel
+        +bestAskLevel() PriceLevel
+        +addResting(Order) void
+        +cancel(orderId) boolean
+        +snapshot(depth) OrderBookSnapshot
+    }
+    class PriceLevel {
+        -long price
+        -Deque~Order~ orders
+        -long totalQty
+    }
+    class Order {
+        -int remainingQty
+        +fill(qty) void
+        +filledQty() int
+    }
+    class Trade {
+        <<record>>
+        +long price
+        +int qty
+        +Side aggressor
+    }
+    class OrderBookSnapshot {
+        <<record>>
+    }
+
+    class TradeListener {
+        <<interface · Observer>>
+        +onTrade(Trade) void
+    }
+    class LoggingTradeListener
+
+    class Side {
+        <<enumeration>>
+        BUY
+        SELL
+    }
+    class OrderType {
+        <<enumeration>>
+        LIMIT
+        MARKET
+    }
+
+    EngineCommand <|.. PlaceOrderCommand
+    EngineCommand <|.. CancelOrderCommand
+    EngineCommand <|.. SnapshotCommand
+    MatchingStrategy <|.. PriceTimePriorityStrategy
+    TradeListener <|.. LoggingTradeListener
+
+    Exchange o-- MatchingEngine : one per symbol (shard)
+    Exchange o-- MatchingStrategy : injected
+    Exchange o-- TradeListener : notifies 0..*
+    Exchange ..> PlaceOrderCommand : creates
+
+    MatchingEngine *-- OrderBook : owns
+    MatchingEngine o-- MatchingStrategy
+    MatchingEngine o-- EngineCommand : queued
+    MatchingEngine ..> Trade : emits
+    EngineCommand ..> MatchingEngine : execute()
+
+    MatchingStrategy ..> OrderBook : mutates
+    MatchingStrategy ..> Trade : produces
+
+    OrderBook *-- PriceLevel : bids/asks
+    OrderBook ..> OrderBookSnapshot : creates
+    PriceLevel o-- Order : FIFO (time priority)
+    Order o-- Side
+    Order o-- OrderType
+    Trade o-- Side : aggressor
