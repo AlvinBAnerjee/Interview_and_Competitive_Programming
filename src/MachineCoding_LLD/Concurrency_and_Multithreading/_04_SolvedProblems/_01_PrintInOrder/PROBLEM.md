@@ -27,4 +27,4 @@ handshake so one thread can only proceed after the other has released it.
 - The Semaphore version needs **no lock** because the permits *are* the handshake.
 - `wait()` must be in a **`while`** loop (spurious wakeups).
 
-See [`FooBar.java`](./FooBar.java).
+See [`FooBar.java`](./FooBar.java) (Semaphore) and [`FooBarTurnVariable.java`](./FooBarTurnVariable.java) (shared `turn` variable + wait/notify).

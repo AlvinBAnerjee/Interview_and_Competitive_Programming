@@ -35,9 +35,9 @@ public class InvokeAllAnyDemo {
 
         // Three "price lookups" that each take a different amount of time.
         List<Callable<String>> tasks = new ArrayList<>();
-        tasks.add(makeTask("Vendor-A", 400, 100));
-        tasks.add(makeTask("Vendor-B", 200, 105)); // fastest
-        tasks.add(makeTask("Vendor-C", 600, 98));
+        tasks.add(makeTask("Vendor-A", 4000, 100));
+        tasks.add(makeTask("Vendor-B", 2000, 105)); // fastest
+        tasks.add(makeTask("Vendor-C", 6000, 98));
 
         // ---- invokeAll: wait for ALL, results in submit order ----
         System.out.println("== invokeAll: collect every quote ==");
