@@ -2,10 +2,65 @@
 
 **Goal:** compose several async steps into a pipeline **without blocking** on `get()` at each stage.
 
-A plain `Future` (Lesson 10) is passive — your only real option is `get()`, which **blocks**. You
-can't say *"when this finishes, do that next"*, so chaining steps means blocking at every stage.
-`CompletableFuture` is a `Future` you attach **callbacks** to, building a pipeline that runs on
-worker threads and never blocks the caller until the very end (if at all).
+## The noob-friendly version
+
+Imagine ordering pizza the normal way:
+
+```
+call the shop -> wait -> wait -> wait -> pizza arrives -> now eat
+```
+
+Your whole thread just sits there doing nothing until the pizza shows up. In code:
+
+```java
+String pizza = orderPizza(); // blocks — this line doesn't return for 5 seconds
+eat(pizza);
+```
+
+That's **blocking**. It's fine for one call, but it falls apart once you have several
+*independent* things to fetch. Say a login needs the user, their permissions, their
+profile picture, and some recommendations — 200ms + 50ms + 500ms + 300ms done one after
+another is over a second. But none of those calls depend on each other, so doing them
+**in parallel** takes only as long as the slowest one (500ms here) instead of the sum.
+
+`CompletableFuture` is how you get that parallelism without manually juggling threads.
+Instead of "wait for the result, then use it," you say "here's what to do *once* the
+result shows up" — and the calling thread never has to sit and wait:
+
+```java
+CompletableFuture.supplyAsync(this::fetchData)
+                  .thenAccept(this::process);
+```
+
+Read it as: *fetch data asynchronously → when it's done → process it.* The main thread
+kicks this off and moves on immediately; a worker thread runs `fetchData()` and, once
+it has a result, runs `process(result)`.
+
+**Before `CompletableFuture`:** you'd create a raw `Thread` per task (expensive, hard to
+coordinate) or use a `Future` (Lesson 10) — but a plain `Future` is passive, so your only
+option is `get()`, which **blocks**. You can't say "when this finishes, do that next," so
+chaining steps still means blocking at every stage. `CompletableFuture` is a `Future` you
+attach **callbacks** to instead — the pipeline runs on worker threads (from the shared
+common `ForkJoinPool`, or an `Executor` you supply) and the caller never blocks until the
+very end, if at all.
+
+**Running several things in parallel and waiting for all of them:**
+
+```java
+CompletableFuture<User>  user  = CompletableFuture.supplyAsync(this::fetchUser);
+CompletableFuture<Orders> orders = CompletableFuture.supplyAsync(this::fetchOrders);
+CompletableFuture<Wallet> wallet = CompletableFuture.supplyAsync(this::fetchWallet);
+
+CompletableFuture.allOf(user, orders, wallet).join(); // wait for all three
+
+Dashboard d = new Dashboard(user.join(), orders.join(), wallet.join());
+```
+
+All three calls start at roughly the same time instead of one after another — the total
+time is about `max(fetchUser, fetchOrders, fetchWallet)`, not the sum.
+
+**Mental model:** stop asking *"is it done yet?"* and start describing *"what should
+happen when it's done."*
 
 ## Starting one
 - `supplyAsync(supplier)` — run on a pool, complete with the returned value.
