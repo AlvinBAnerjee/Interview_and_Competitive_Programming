@@ -1,4 +1,4 @@
-package _16_Greedy.intervalProblems;
+package DataStructuresAndAlgorithms._16_Greedy.intervalProblems;
 
 import java.util.Arrays;
 

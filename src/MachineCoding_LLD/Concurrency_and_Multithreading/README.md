@@ -97,8 +97,8 @@ runnable program:
 | 9 | [Multithreaded Web Crawler](./_04_SolvedProblems/_09_WebCrawlerMultithreaded/PROBLEM.md) | Medium | Thread pool + concurrent dedup + dynamic termination | `ExecutorService`, `ConcurrentHashMap.newKeySet`, `AtomicInteger` counter |
 | 10 | [Thread Pool (from scratch)](./_04_SolvedProblems/_10_CustomThreadPool/PROBLEM.md) | Medium | *Be* the executor — worker lifecycle & graceful shutdown | Worker threads + `BlockingQueue` + `volatile` flag |
 
-> Also relevant (in the LLD folder): [Thread-safe **LRU Cache**](../LLD_Interview_Problems/04_Easy_LRUCache/PROBLEM.md)
-> and [**Rate Limiter** LLD spec](../LLD_Interview_Problems/08_Medium_RateLimiter/PROBLEM.md).
+> Also relevant (in the LLD folder): [Thread-safe **LRU Cache**](../LLD_Interview_Problems/_04_Easy_LRUCache/PROBLEM.md)
+> and [**Rate Limiter** LLD spec](../LLD_Interview_Problems/_08_Medium_RateLimiter/PROBLEM.md).
 
 ---
 

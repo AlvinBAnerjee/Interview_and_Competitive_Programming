@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 /*
 Only one element repeats n no of times
 TC=O(n)

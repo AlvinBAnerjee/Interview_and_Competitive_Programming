@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 
 public class _19_Flyoyd_Warshall {
     final static int INF = 99999, V = 4;

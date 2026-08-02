@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class __11_LCS {
     public int longestCommonSubsequence(String text1, String text2) {

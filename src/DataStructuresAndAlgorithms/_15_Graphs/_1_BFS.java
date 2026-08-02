@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import java.util.*;
 public class _1_BFS {
     public static class Edge{

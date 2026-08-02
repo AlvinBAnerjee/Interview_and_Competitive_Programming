@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import java.util.*;
 public class _8_Topological_Sort_DFS {
     public static class Edge{

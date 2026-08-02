@@ -1,4 +1,4 @@
-package _10_Stack;
+package DataStructuresAndAlgorithms._10_Stack;
 /*
 Easy to solve if you can solve this using next greater element
  */

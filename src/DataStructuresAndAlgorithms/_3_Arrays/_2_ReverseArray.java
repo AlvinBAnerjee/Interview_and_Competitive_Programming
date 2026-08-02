@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 
 import java.util.Arrays;
 import java.util.Scanner;

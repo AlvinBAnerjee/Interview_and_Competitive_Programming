@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class __14_Min_Jumps_to_Reach_End {
     public int jump(int[] nums) {

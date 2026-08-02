@@ -1,4 +1,4 @@
-package _21_Disjoint_sets;
+package DataStructuresAndAlgorithms._21_Disjoint_sets;
 
 public class _2_Path_Compression {
     static class DisjointSet{

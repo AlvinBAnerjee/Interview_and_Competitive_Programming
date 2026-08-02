@@ -1,4 +1,4 @@
-package _20_SegmentTree_BinaryIndexedTree;
+package DataStructuresAndAlgorithms._20_SegmentTree_BinaryIndexedTree;
 
 import java.util.Arrays;
 

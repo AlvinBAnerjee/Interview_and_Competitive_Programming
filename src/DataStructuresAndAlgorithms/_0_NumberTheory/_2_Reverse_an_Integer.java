@@ -1,4 +1,4 @@
-package _0_NumberTheory;
+package DataStructuresAndAlgorithms._0_NumberTheory;
 
 class _2_Reverse_an_Integer {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 public class _4_check_if_balanced {
     static class  node{

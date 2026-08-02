@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 
 public class _11_MajorityElement {
     public static void main(String[] args) {

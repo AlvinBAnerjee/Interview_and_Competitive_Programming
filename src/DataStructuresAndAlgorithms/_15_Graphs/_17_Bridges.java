@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import java.util.*;
 /*
 a edge u-v is a bridge if low[v]>discovery[u]

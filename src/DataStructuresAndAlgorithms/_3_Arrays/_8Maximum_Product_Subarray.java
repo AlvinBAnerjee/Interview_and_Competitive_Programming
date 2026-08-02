@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 /*
 Simply apply Kadanes from both sides
  */

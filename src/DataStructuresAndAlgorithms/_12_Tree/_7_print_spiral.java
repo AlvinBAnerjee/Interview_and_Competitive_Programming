@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 import java.util.LinkedList;
 import java.util.Queue;

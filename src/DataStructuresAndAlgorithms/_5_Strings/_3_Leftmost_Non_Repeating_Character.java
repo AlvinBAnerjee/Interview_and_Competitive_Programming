@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 import  java.util.*;
 public class _3_Leftmost_Non_Repeating_Character {
     /*

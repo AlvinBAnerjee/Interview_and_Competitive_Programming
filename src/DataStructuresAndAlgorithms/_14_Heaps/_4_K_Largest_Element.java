@@ -1,4 +1,4 @@
-package _14_Heaps;
+package DataStructuresAndAlgorithms._14_Heaps;
 /*
 Dude we can use Max_Heap that will give us o(n)+o(klogn) but dang we can do better as when k is large it becomes 0(n+nlogn)
 

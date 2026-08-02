@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 
 public class _8_Allocate_Minimum_no_of_Pages {
     public static void main(String[] args) {

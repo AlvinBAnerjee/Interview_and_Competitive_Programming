@@ -1,4 +1,4 @@
-package _0_NumberTheory;
+package DataStructuresAndAlgorithms._0_NumberTheory;
 
 public class _3_ModularEmp {
     public static void main(String[] args) {

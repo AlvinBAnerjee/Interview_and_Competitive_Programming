@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 import org.w3c.dom.Node;
 

@@ -1,4 +1,4 @@
-package _1_BitMagic;
+package DataStructuresAndAlgorithms._1_BitMagic;
 
 import java.util.Arrays;
 import java.util.Scanner;

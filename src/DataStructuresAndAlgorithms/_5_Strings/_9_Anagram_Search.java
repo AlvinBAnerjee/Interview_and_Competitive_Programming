@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _9_Anagram_Search {
     static final int CHAR=256;

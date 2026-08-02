@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 import java.util.Scanner;
 /*
 Dynamic Programming is mainly an optimization over plain recursion.

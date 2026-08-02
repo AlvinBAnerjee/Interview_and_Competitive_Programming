@@ -1,4 +1,4 @@
-package _13_BST;
+package DataStructuresAndAlgorithms._13_BST;
 
 import java.io.FileWriter;
 import java.io.IOException;

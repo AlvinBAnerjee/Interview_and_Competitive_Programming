@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import java.util.*;
 /*
 A O(V+E) algorithm to find all Articulation Points (APs)

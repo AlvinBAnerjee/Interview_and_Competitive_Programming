@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 
 public class _2_Count_Ocurrences_of_an_element {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package _11_Queue;
+package DataStructuresAndAlgorithms._11_Queue;
 
 import javax.sound.sampled.Line;
 import java.util.ArrayDeque;

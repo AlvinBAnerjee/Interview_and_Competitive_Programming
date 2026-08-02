@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 /*
 Super complex to explain just google tushar roys solution or geeks for geeks solution
  */

@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 public class _2_size_of_binary_tree {
     static class  node{

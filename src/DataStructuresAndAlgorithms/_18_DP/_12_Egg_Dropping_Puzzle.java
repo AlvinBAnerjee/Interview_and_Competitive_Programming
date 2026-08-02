@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 public class _12_Egg_Dropping_Puzzle {
     static int dp2[][] = new int[101][10001];
 

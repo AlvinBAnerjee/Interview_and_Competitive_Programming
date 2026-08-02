@@ -1,4 +1,4 @@
-package _21_Disjoint_sets;
+package DataStructuresAndAlgorithms._21_Disjoint_sets;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 /*
 Given an unsorted integer array, find the first missing positive integer.
 

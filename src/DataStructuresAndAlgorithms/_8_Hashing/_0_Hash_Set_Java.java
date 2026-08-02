@@ -1,4 +1,4 @@
-package _8_Hashing;
+package DataStructuresAndAlgorithms._8_Hashing;
 
 import java.util.Collections;
 import java.util.HashSet;

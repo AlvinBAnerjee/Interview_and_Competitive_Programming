@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class __12_Longest_Common_Substring {
     int longestCommonSubstr(String S1, String S2, int n, int m){

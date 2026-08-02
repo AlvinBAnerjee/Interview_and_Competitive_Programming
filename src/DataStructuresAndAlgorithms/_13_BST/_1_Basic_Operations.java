@@ -1,4 +1,4 @@
-package _13_BST;
+package DataStructuresAndAlgorithms._13_BST;
 
 public class _1_Basic_Operations {
     static class Node{

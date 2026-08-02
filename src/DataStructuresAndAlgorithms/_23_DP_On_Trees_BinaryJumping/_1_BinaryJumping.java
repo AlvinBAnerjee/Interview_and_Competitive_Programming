@@ -1,4 +1,4 @@
-package _23_DP_On_Trees_BinaryJumping;
+package DataStructuresAndAlgorithms._23_DP_On_Trees_BinaryJumping;
 
 import java.util.Arrays;
 

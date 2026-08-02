@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 
 /*
 maximum=Max(mormal_maximum,circular_max)

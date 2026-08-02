@@ -1,4 +1,4 @@
-package _10_Stack;
+package DataStructuresAndAlgorithms._10_Stack;
 
 import java.util.Arrays;
 import java.util.Stack;

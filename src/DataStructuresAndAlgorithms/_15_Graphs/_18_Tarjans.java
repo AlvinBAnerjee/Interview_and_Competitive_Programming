@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 
 /*
 TODO: implement Tarjan's algorithm for Strongly Connected Components.

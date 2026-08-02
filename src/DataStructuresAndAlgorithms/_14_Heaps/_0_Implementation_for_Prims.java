@@ -1,4 +1,4 @@
-package _14_Heaps;
+package DataStructuresAndAlgorithms._14_Heaps;
 import java.util.*;
 public class _0_Implementation_for_Prims {
     static class Pair{

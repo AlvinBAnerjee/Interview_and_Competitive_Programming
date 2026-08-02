@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _5_Naive_Pattern_Search {
     public static void search(String txt, String pat)

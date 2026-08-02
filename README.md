@@ -62,8 +62,10 @@ Interview_and_Competitive_Programming/
 │   │   ├── _21_Disjoint_sets/        Union-Find with path compression
 │   │   ├── _22_BackTracking/         Subsets, permutations, combination sum
 │   │   └── _23_DP_On_Trees_BinaryJumping/       DP on trees, binary jumping / LCA
-│   └── MachineCoding_LLD/        Design patterns, LLD problems, and
-│                                 Concurrency_and_Multithreading (Fundamentals + solved problems)
+│   └── MachineCoding_LLD/
+│       ├── DesignPatterns/            14 GoF patterns, each runnable with its own diagram
+│       ├── LLD_Interview_Problems/    10 difficulty-ordered design problems (PROBLEM + SOLUTION)
+│       └── Concurrency_and_Multithreading/   Fundamentals lessons + solved concurrency classics
 └── README.md
 ```
 
@@ -106,8 +108,9 @@ Interview_and_Competitive_Programming/
 
 ### System-Level and Applied Topics
 
-- [Design Patterns](src/MachineCoding_LLD/DesignPatterns) — Factory, Singleton, Adapter, Decorator, Builder, Chain of Responsibility, Facade, Proxy.
-- [Concurrency & Multithreading](src/MachineCoding_LLD/Concurrency_and_Multithreading) — start with the step-by-step [`_00_Fundamentals/`](src/MachineCoding_LLD/Concurrency_and_Multithreading/_00_Fundamentals) lessons (threads → `synchronized` → `volatile` → atomics → `wait/notify`), then notes, interview Q&A, and solved classics (Producer-Consumer, Reader-Writer, coffee shop, dining philosophers, rate limiter).
+- [Design Patterns](src/MachineCoding_LLD/DesignPatterns) — UML relations primer plus Factory, Abstract Factory, Singleton, Adapter, Decorator, Builder, Chain of Responsibility, Facade, Proxy, Strategy, Observer, State, and Command, each a self-contained runnable example with its own diagram.
+- [LLD / Machine Coding Interview Problems](src/MachineCoding_LLD/LLD_Interview_Problems) — difficulty-ordered design problems (Parking Lot, Vending Machine, Tic-Tac-Toe, LRU Cache, Splitwise, Elevator System, BookMyShow, Rate Limiter, Cab Booking, Stock Exchange), each with a `PROBLEM.md` spec and a worked `SOLUTION.md`.
+- [Concurrency & Multithreading](src/MachineCoding_LLD/Concurrency_and_Multithreading) — start with the step-by-step [`_00_Fundamentals/`](src/MachineCoding_LLD/Concurrency_and_Multithreading/_00_Fundamentals) lessons (threads → `synchronized` → `volatile` → atomics → `wait/notify` → locks → latches → the executor framework → `CompletableFuture`), then notes, interview Q&A, and solved classics (Producer-Consumer, Reader-Writer, coffee shop, print-in-order, bounded blocking queue, dining philosophers, rate limiter, multithreaded FizzBuzz, H2O assembly, web crawler, custom thread pool).
 
 ---
 

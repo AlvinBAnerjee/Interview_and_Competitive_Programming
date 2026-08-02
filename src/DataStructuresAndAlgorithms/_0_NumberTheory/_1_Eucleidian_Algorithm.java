@@ -1,4 +1,4 @@
-package _0_NumberTheory;
+package DataStructuresAndAlgorithms._0_NumberTheory;
 
 import java.util.Scanner;
 

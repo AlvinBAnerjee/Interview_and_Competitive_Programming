@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 import java.util.Scanner;
 //Time complexity is 0(no_of_coins*total_length)

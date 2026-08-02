@@ -1,4 +1,4 @@
-package _2_Recursion;
+package DataStructuresAndAlgorithms._2_Recursion;
 
 import java.util.Scanner;
 /*

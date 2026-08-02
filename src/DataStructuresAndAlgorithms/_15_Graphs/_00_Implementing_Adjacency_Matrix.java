@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 
 public class _00_Implementing_Adjacency_Matrix {
     public static class Graph{

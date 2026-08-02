@@ -1,4 +1,4 @@
-package _7_Matrix;
+package DataStructuresAndAlgorithms._7_Matrix;
 
 import java.util.Scanner;
 

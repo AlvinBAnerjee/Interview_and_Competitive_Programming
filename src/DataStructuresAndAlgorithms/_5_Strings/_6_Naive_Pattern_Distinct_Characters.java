@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _6_Naive_Pattern_Distinct_Characters {
     static void search(String pat, String txt)

@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class    _11_Subset_Sum_Problems {
     public static void main(String[] args) {

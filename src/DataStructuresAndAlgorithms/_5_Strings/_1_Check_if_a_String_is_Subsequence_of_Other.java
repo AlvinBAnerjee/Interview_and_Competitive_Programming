@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _1_Check_if_a_String_is_Subsequence_of_Other {
     boolean isSubSequence(String A, String B){

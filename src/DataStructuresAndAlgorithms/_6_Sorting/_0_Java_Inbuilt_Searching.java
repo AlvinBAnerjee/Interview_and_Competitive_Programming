@@ -1,4 +1,4 @@
-package _6_Sorting;
+package DataStructuresAndAlgorithms._6_Sorting;
 
 import java.util.Arrays;
 

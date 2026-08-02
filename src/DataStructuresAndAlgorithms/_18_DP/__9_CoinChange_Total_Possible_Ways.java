@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class __9_CoinChange_Total_Possible_Ways {
     public int countWays(int coins[],  int amount)

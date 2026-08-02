@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 /*
 refer gfg for the problems and solution and please please please watch the video made by pep code
  */

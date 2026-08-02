@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class __13_EditDistance {
     static int FindRec(String str1,String str2,int m,int n)

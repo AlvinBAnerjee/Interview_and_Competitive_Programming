@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 import  java.util.*;
 public class _10_Longest_Substring_with_Distinct_Characters {
     public int lengthOfLongestSubstring(String s) {

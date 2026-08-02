@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 
 import java.util.Arrays;
 import java.util.Scanner;

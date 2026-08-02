@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

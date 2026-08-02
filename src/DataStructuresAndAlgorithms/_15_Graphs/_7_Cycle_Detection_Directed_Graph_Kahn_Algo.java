@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import  java.util.*;
 public class _7_Cycle_Detection_Directed_Graph_Kahn_Algo {
     public static class Edge{

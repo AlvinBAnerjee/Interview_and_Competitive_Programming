@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 
 public class  _9_Minimum_Jumps_to_Reach_the_End {
     public static void main(String[] args) {

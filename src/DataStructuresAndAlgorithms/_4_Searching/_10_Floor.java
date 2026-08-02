@@ -1,4 +1,4 @@
-package _4_Searching;
+package DataStructuresAndAlgorithms._4_Searching;
 
 public class _10_Floor {
     public static void main(String[] args) {

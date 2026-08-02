@@ -1,4 +1,4 @@
-package _21_Disjoint_sets;
+package DataStructuresAndAlgorithms._21_Disjoint_sets;
 /*
 May take 0(n) for find and union
  */

@@ -1,4 +1,4 @@
-package _16_Greedy;
+package DataStructuresAndAlgorithms._16_Greedy;
 
 public class _2_JobSequencing {
 }

@@ -1,4 +1,4 @@
-package _21_Disjoint_sets;
+package DataStructuresAndAlgorithms._21_Disjoint_sets;
 /*
 TC: Worst case O(logn)
  */

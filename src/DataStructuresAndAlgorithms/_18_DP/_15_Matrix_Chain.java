@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 public class _15_Matrix_Chain {
     public static void main(String[] args) {
         int dimension_array[] = {20, 10, 30,40, 10, 30,40,20, 10, 30,40,100,34,23,34,56,78,98,45};

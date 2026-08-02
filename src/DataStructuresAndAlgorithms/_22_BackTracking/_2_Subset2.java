@@ -1,4 +1,4 @@
-package _22_BackTracking;
+package DataStructuresAndAlgorithms._22_BackTracking;
 
 import java.util.ArrayList;
 import java.util.Arrays;

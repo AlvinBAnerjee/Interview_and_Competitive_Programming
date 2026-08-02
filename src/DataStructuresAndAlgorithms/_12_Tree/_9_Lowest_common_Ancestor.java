@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 public class    _9_Lowest_common_Ancestor {
     static class  node{

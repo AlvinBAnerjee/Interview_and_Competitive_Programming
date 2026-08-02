@@ -1,4 +1,4 @@
-package _2_Recursion;
+package DataStructuresAndAlgorithms._2_Recursion;
 
 public class JosephusProblem {
     public int findTheWinner(int n, int k) {

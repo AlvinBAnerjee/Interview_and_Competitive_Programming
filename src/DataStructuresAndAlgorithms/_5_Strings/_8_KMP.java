@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _8_KMP {
     public boolean KMPSearch(String txt,String pattern)

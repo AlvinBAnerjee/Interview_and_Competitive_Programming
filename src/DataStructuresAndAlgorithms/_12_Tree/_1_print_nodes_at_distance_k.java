@@ -1,4 +1,4 @@
-package _12_Tree;
+package DataStructuresAndAlgorithms._12_Tree;
 
 public class _1_print_nodes_at_distance_k {
     static class  node{

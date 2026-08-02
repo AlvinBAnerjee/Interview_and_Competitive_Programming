@@ -1,4 +1,4 @@
-package _19_Trie;
+package DataStructuresAndAlgorithms._19_Trie;
 
 import com.sun.source.tree.Tree;
 

@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 /*
 The applications/variations are :
 1. No of deletions to make an array sorted

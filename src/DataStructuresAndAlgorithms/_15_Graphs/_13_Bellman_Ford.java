@@ -1,4 +1,4 @@
-package _15_Graphs;
+package DataStructuresAndAlgorithms._15_Graphs;
 import javax.naming.InsufficientResourcesException;
 import java.util.*;
 public class _13_Bellman_Ford {

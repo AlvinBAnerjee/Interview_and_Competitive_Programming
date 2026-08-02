@@ -1,4 +1,4 @@
-package _1_BitMagic;
+package DataStructuresAndAlgorithms._1_BitMagic;
 
 public class  x_only_one_number_occurs_once {
     /*

@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class _2_Check_If_Anagram {
     public static boolean isAnagram(String a,String b)

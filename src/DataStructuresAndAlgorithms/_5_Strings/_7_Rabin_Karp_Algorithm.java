@@ -1,4 +1,4 @@
-package _5_Strings;
+package DataStructuresAndAlgorithms._5_Strings;
 
 public class    _7_Rabin_Karp_Algorithm {
     static int search(String txt, String pattern, int q)//returns index of first match

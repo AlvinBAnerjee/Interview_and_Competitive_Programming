@@ -1,4 +1,4 @@
-package _16_Greedy;
+package DataStructuresAndAlgorithms._16_Greedy;
 
 import java.util.Arrays;
 

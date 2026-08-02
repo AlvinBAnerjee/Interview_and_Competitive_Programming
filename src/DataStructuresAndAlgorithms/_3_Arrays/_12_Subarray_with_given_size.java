@@ -1,4 +1,4 @@
-package _3_Arrays;
+package DataStructuresAndAlgorithms._3_Arrays;
 
 public class _12_Subarray_with_given_size {
     public static void main(String[] args) {

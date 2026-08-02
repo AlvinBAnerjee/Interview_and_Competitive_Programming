@@ -1,4 +1,4 @@
-package _9_LinkedList;
+package DataStructuresAndAlgorithms._9_LinkedList;
 
 public class _1_LinkedList_Loop_Detection {
     public static void main(String[] args) {

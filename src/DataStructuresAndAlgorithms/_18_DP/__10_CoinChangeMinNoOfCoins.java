@@ -1,4 +1,4 @@
-package _18_DP;
+package DataStructuresAndAlgorithms._18_DP;
 import  java.util.*;
 public class __10_CoinChangeMinNoOfCoins {
     public int coinChange(int[] coins, int amount) {
