@@ -68,6 +68,15 @@ index i". Any `arr[i]` equal to `arr[i - 1]` other than the very first one in
 the loop (`i == idx`) would just re-derive a branch already produced by
 `i - 1`, so it's skipped outright.
 
+### Watching it happen — `Subset2`'s recursion tree
+
+See `assets/duplicate-pruning-tree.svg` for a worked diagram of the exact
+`rec` code above running on `nums = [1,1,1]` and `nums = [1,1,1,2,2,3]`,
+with the branches the `i != idx && arr[i] == arr[i - 1]` check prunes shown
+struck through against an unpruned tree for comparison.
+
+<img src="./assets/duplicate-pruning-tree.svg" alt="Subset2 recursion tree showing duplicate pruning for [1,1,1] and [1,1,1,2,2,3]">
+
 ### Pattern B — pick/skip (or used[]) DFS, prune with `!used[i - 1]`
 
 Used in `_2_Subset2.java` (`rec2`), `_4_Permutation2.java`, and
