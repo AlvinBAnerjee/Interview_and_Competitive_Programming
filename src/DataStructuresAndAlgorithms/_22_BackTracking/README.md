@@ -70,12 +70,15 @@ the loop (`i == idx`) would just re-derive a branch already produced by
 
 ### Watching it happen — `Subset2`'s recursion tree
 
-See `assets/duplicate-pruning-tree.svg` for a worked diagram of the exact
-`rec` code above running on `nums = [1,1,1]` and `nums = [1,1,1,2,2,3]`,
-with the branches the `i != idx && arr[i] == arr[i - 1]` check prunes shown
-struck through against an unpruned tree for comparison.
+The diagram below runs the exact `rec` code above top to bottom on
+`nums = [1,1,1]` and `nums = [1,1,1,2,2,3]`. Solid edges are loop
+iterations that took a value and recursed; dashed **red** edges are the
+iterations `i != idx && arr[i] == arr[i - 1]` prunes — the loop skips them
+outright, so no call, no subtree, no duplicate leaves. Bracket labels mark
+terminal subsets; every node above a leaf is also a valid emitted subset,
+readable by tracing the edge values from the root down to it.
 
-<img src="./assets/duplicate-pruning-tree.svg" alt="Subset2 recursion tree showing duplicate pruning for [1,1,1] and [1,1,1,2,2,3]">
+<img src="./assets/duplicate-pruning-tree.svg" alt="Subset2 recursion tree, top to bottom, showing duplicate pruning in red for [1,1,1] and [1,1,1,2,2,3]">
 
 ### Pattern B — pick/skip (or used[]) DFS, prune with `!used[i - 1]`
 
