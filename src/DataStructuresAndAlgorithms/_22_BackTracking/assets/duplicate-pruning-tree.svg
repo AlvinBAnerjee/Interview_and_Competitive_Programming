@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1368" width="900" height="1368" font-family="ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace">
+<defs>
+<style>
+  :root { }
+  .bg { fill: #f6f3ec; }
+  .card { fill: #ffffff; stroke: #e4ddcd; stroke-width: 1; }
+  .title { font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 700; font-size: 20px; fill: #2a2620; }
+  .subtitle { font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; fill: #6b6455; }
+  .section-title { font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 14px; fill: #3a352c; }
+  .conn { stroke: #c9c1ac; stroke-width: 1.4; fill: none; }
+  .leader { stroke: #e4ddcd; stroke-width: 1; stroke-dasharray: 1.5 2.5; fill: none; }
+  .node { stroke: #ffffff; stroke-width: 1.4; }
+  .val-label { font-size: 12px; font-weight: 700; text-anchor: middle; }
+  .path-label { font-size: 12.5px; fill: #3a352c; }
+  .prune-stub { stroke: #c0503f; stroke-width: 1.2; stroke-dasharray: 2.5 2; opacity: 0.85; }
+  .prune-x { font-size: 9px; fill: #c0503f; font-weight: 700; }
+  .prune-label { font-size: 10.5px; fill: #a8503f; font-style: italic; }
+  :root { --v1: #3465c8; --v2: #b8791a; --v3: #7a4fc4; --root: #6b6455; }
+</style>
+</defs>
+
+<rect class="bg" x="0" y="0" width="900" height="1368" />
+<rect class="card" x="10" y="10" width="880" height="1348" rx="10" />
+
+<text class="title" x="34" y="40">Subset2 duplicate pruning &#8212; recursion tree</text>
+<text class="subtitle" x="34" y="59">i != idx &amp;&amp; arr[i] == arr[i-1] &#8594; skip. Sorted input, indices scanned left to right.</text>
+
+<text class="section-title" x="34" y="78">nums = [1,1,1]</text>
+<g transform="translate(0,70)">
+<g class="tree1">
+<line class="conn" x1="76.8" y1="34.0" x2="76.8" y2="68.0" />
+<line class="conn" x1="76.8" y1="68.0" x2="114.5" y2="68.0" />
+<line class="conn" x1="154.8" y1="68.0" x2="154.8" y2="102.0" />
+<line class="conn" x1="154.8" y1="102.0" x2="192.5" y2="102.0" />
+<line class="conn" x1="232.8" y1="102.0" x2="232.8" y2="136.0" />
+<line class="conn" x1="232.8" y1="136.0" x2="270.5" y2="136.0" />
+<line class="prune-stub" x1="46.0" y1="37.0" x2="66.0" y2="46.0" />
+<text class="prune-x" x="69.0" y="49.5">&#10005;</text>
+<text class="prune-label" x="78.0" y="49.5">1 &#215;2 dup</text>
+<line class="prune-stub" x1="124.0" y1="71.0" x2="144.0" y2="80.0" />
+<text class="prune-x" x="147.0" y="83.5">&#10005;</text>
+<text class="prune-label" x="156.0" y="83.5">1 &#215;1 dup</text>
+<circle class="node" cx="44.0" cy="34.0" r="5.5" style="fill:var(--root)" />
+<line class="leader" x1="51.5" y1="34.0" x2="298.0" y2="34.0" />
+<text class="path-label" x="304.0" y="38.0">[]</text>
+<circle class="node" cx="122.0" cy="68.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="122.0" y="59.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="129.5" y1="68.0" x2="298.0" y2="68.0" />
+<text class="path-label" x="304.0" y="72.0">[1]</text>
+<circle class="node" cx="200.0" cy="102.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="200.0" y="93.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="207.5" y1="102.0" x2="298.0" y2="102.0" />
+<text class="path-label" x="304.0" y="106.0">[1,1]</text>
+<circle class="node" cx="278.0" cy="136.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="278.0" y="127.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="285.5" y1="136.0" x2="298.0" y2="136.0" />
+<text class="path-label" x="304.0" y="140.0">[1,1,1]</text>
+</g>
+</g>
+
+<text class="section-title" x="34" y="324">nums = [1,1,1,2,2,3]</text>
+<g transform="translate(0,314)">
+<g class="tree2" transform="translate(0,0)">
+<line class="conn" x1="76.8" y1="40.0" x2="76.8" y2="776.0" />
+<line class="conn" x1="76.8" y1="72.0" x2="114.5" y2="72.0" />
+<line class="conn" x1="76.8" y1="648.0" x2="114.5" y2="648.0" />
+<line class="conn" x1="76.8" y1="776.0" x2="114.5" y2="776.0" />
+<line class="conn" x1="154.8" y1="72.0" x2="154.8" y2="616.0" />
+<line class="conn" x1="154.8" y1="104.0" x2="192.5" y2="104.0" />
+<line class="conn" x1="154.8" y1="488.0" x2="192.5" y2="488.0" />
+<line class="conn" x1="154.8" y1="616.0" x2="192.5" y2="616.0" />
+<line class="conn" x1="232.8" y1="104.0" x2="232.8" y2="456.0" />
+<line class="conn" x1="232.8" y1="136.0" x2="270.5" y2="136.0" />
+<line class="conn" x1="232.8" y1="328.0" x2="270.5" y2="328.0" />
+<line class="conn" x1="232.8" y1="456.0" x2="270.5" y2="456.0" />
+<line class="conn" x1="310.8" y1="136.0" x2="310.8" y2="296.0" />
+<line class="conn" x1="310.8" y1="168.0" x2="348.5" y2="168.0" />
+<line class="conn" x1="310.8" y1="296.0" x2="348.5" y2="296.0" />
+<line class="conn" x1="388.8" y1="168.0" x2="388.8" y2="264.0" />
+<line class="conn" x1="388.8" y1="200.0" x2="426.5" y2="200.0" />
+<line class="conn" x1="388.8" y1="264.0" x2="426.5" y2="264.0" />
+<line class="conn" x1="466.8" y1="200.0" x2="466.8" y2="232.0" />
+<line class="conn" x1="466.8" y1="232.0" x2="504.5" y2="232.0" />
+<line class="conn" x1="310.8" y1="328.0" x2="310.8" y2="424.0" />
+<line class="conn" x1="310.8" y1="360.0" x2="348.5" y2="360.0" />
+<line class="conn" x1="310.8" y1="424.0" x2="348.5" y2="424.0" />
+<line class="conn" x1="388.8" y1="360.0" x2="388.8" y2="392.0" />
+<line class="conn" x1="388.8" y1="392.0" x2="426.5" y2="392.0" />
+<line class="conn" x1="232.8" y1="488.0" x2="232.8" y2="584.0" />
+<line class="conn" x1="232.8" y1="520.0" x2="270.5" y2="520.0" />
+<line class="conn" x1="232.8" y1="584.0" x2="270.5" y2="584.0" />
+<line class="conn" x1="310.8" y1="520.0" x2="310.8" y2="552.0" />
+<line class="conn" x1="310.8" y1="552.0" x2="348.5" y2="552.0" />
+<line class="conn" x1="154.8" y1="648.0" x2="154.8" y2="744.0" />
+<line class="conn" x1="154.8" y1="680.0" x2="192.5" y2="680.0" />
+<line class="conn" x1="154.8" y1="744.0" x2="192.5" y2="744.0" />
+<line class="conn" x1="232.8" y1="680.0" x2="232.8" y2="712.0" />
+<line class="conn" x1="232.8" y1="712.0" x2="270.5" y2="712.0" />
+<line class="prune-stub" x1="46.0" y1="43.0" x2="66.0" y2="51.0" />
+<text class="prune-x" x="69.0" y="54.5">&#10005;</text>
+<text class="prune-label" x="78.0" y="54.5">1 &#215;2 dup</text>
+<line class="prune-stub" x1="46.0" y1="43.0" x2="66.0" y2="62.0" />
+<text class="prune-x" x="69.0" y="65.5">&#10005;</text>
+<text class="prune-label" x="78.0" y="65.5">2 &#215;1 dup</text>
+<line class="prune-stub" x1="124.0" y1="75.0" x2="144.0" y2="83.0" />
+<text class="prune-x" x="147.0" y="86.5">&#10005;</text>
+<text class="prune-label" x="156.0" y="86.5">1 &#215;1 dup</text>
+<line class="prune-stub" x1="124.0" y1="75.0" x2="144.0" y2="94.0" />
+<text class="prune-x" x="147.0" y="97.5">&#10005;</text>
+<text class="prune-label" x="156.0" y="97.5">2 &#215;1 dup</text>
+<line class="prune-stub" x1="202.0" y1="107.0" x2="222.0" y2="115.0" />
+<text class="prune-x" x="225.0" y="118.5">&#10005;</text>
+<text class="prune-label" x="234.0" y="118.5">2 &#215;1 dup</text>
+<line class="prune-stub" x1="280.0" y1="139.0" x2="300.0" y2="147.0" />
+<text class="prune-x" x="303.0" y="150.5">&#10005;</text>
+<text class="prune-label" x="312.0" y="150.5">2 &#215;1 dup</text>
+<circle class="node" cx="44.0" cy="40.0" r="5.5" style="fill:var(--root)" />
+<line class="leader" x1="51.5" y1="40.0" x2="532.0" y2="40.0" />
+<text class="path-label" x="538.0" y="44.0">[]</text>
+<circle class="node" cx="122.0" cy="72.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="122.0" y="63.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="129.5" y1="72.0" x2="532.0" y2="72.0" />
+<text class="path-label" x="538.0" y="76.0">[1]</text>
+<circle class="node" cx="200.0" cy="104.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="200.0" y="95.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="207.5" y1="104.0" x2="532.0" y2="104.0" />
+<text class="path-label" x="538.0" y="108.0">[1,1]</text>
+<circle class="node" cx="278.0" cy="136.0" r="5.5" style="fill:var(--v1)" />
+<text class="val-label" x="278.0" y="127.0" style="fill:var(--v1)">1</text>
+<line class="leader" x1="285.5" y1="136.0" x2="532.0" y2="136.0" />
+<text class="path-label" x="538.0" y="140.0">[1,1,1]</text>
+<circle class="node" cx="356.0" cy="168.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="356.0" y="159.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="363.5" y1="168.0" x2="532.0" y2="168.0" />
+<text class="path-label" x="538.0" y="172.0">[1,1,1,2]</text>
+<circle class="node" cx="434.0" cy="200.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="434.0" y="191.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="441.5" y1="200.0" x2="532.0" y2="200.0" />
+<text class="path-label" x="538.0" y="204.0">[1,1,1,2,2]</text>
+<circle class="node" cx="512.0" cy="232.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="512.0" y="223.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="519.5" y1="232.0" x2="532.0" y2="232.0" />
+<text class="path-label" x="538.0" y="236.0">[1,1,1,2,2,3]</text>
+<circle class="node" cx="434.0" cy="264.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="434.0" y="255.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="441.5" y1="264.0" x2="532.0" y2="264.0" />
+<text class="path-label" x="538.0" y="268.0">[1,1,1,2,3]</text>
+<circle class="node" cx="356.0" cy="296.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="356.0" y="287.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="363.5" y1="296.0" x2="532.0" y2="296.0" />
+<text class="path-label" x="538.0" y="300.0">[1,1,1,3]</text>
+<circle class="node" cx="278.0" cy="328.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="278.0" y="319.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="285.5" y1="328.0" x2="532.0" y2="328.0" />
+<text class="path-label" x="538.0" y="332.0">[1,1,2]</text>
+<circle class="node" cx="356.0" cy="360.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="356.0" y="351.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="363.5" y1="360.0" x2="532.0" y2="360.0" />
+<text class="path-label" x="538.0" y="364.0">[1,1,2,2]</text>
+<circle class="node" cx="434.0" cy="392.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="434.0" y="383.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="441.5" y1="392.0" x2="532.0" y2="392.0" />
+<text class="path-label" x="538.0" y="396.0">[1,1,2,2,3]</text>
+<circle class="node" cx="356.0" cy="424.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="356.0" y="415.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="363.5" y1="424.0" x2="532.0" y2="424.0" />
+<text class="path-label" x="538.0" y="428.0">[1,1,2,3]</text>
+<circle class="node" cx="278.0" cy="456.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="278.0" y="447.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="285.5" y1="456.0" x2="532.0" y2="456.0" />
+<text class="path-label" x="538.0" y="460.0">[1,1,3]</text>
+<circle class="node" cx="200.0" cy="488.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="200.0" y="479.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="207.5" y1="488.0" x2="532.0" y2="488.0" />
+<text class="path-label" x="538.0" y="492.0">[1,2]</text>
+<circle class="node" cx="278.0" cy="520.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="278.0" y="511.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="285.5" y1="520.0" x2="532.0" y2="520.0" />
+<text class="path-label" x="538.0" y="524.0">[1,2,2]</text>
+<circle class="node" cx="356.0" cy="552.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="356.0" y="543.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="363.5" y1="552.0" x2="532.0" y2="552.0" />
+<text class="path-label" x="538.0" y="556.0">[1,2,2,3]</text>
+<circle class="node" cx="278.0" cy="584.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="278.0" y="575.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="285.5" y1="584.0" x2="532.0" y2="584.0" />
+<text class="path-label" x="538.0" y="588.0">[1,2,3]</text>
+<circle class="node" cx="200.0" cy="616.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="200.0" y="607.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="207.5" y1="616.0" x2="532.0" y2="616.0" />
+<text class="path-label" x="538.0" y="620.0">[1,3]</text>
+<circle class="node" cx="122.0" cy="648.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="122.0" y="639.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="129.5" y1="648.0" x2="532.0" y2="648.0" />
+<text class="path-label" x="538.0" y="652.0">[2]</text>
+<circle class="node" cx="200.0" cy="680.0" r="5.5" style="fill:var(--v2)" />
+<text class="val-label" x="200.0" y="671.0" style="fill:var(--v2)">2</text>
+<line class="leader" x1="207.5" y1="680.0" x2="532.0" y2="680.0" />
+<text class="path-label" x="538.0" y="684.0">[2,2]</text>
+<circle class="node" cx="278.0" cy="712.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="278.0" y="703.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="285.5" y1="712.0" x2="532.0" y2="712.0" />
+<text class="path-label" x="538.0" y="716.0">[2,2,3]</text>
+<circle class="node" cx="200.0" cy="744.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="200.0" y="735.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="207.5" y1="744.0" x2="532.0" y2="744.0" />
+<text class="path-label" x="538.0" y="748.0">[2,3]</text>
+<circle class="node" cx="122.0" cy="776.0" r="5.5" style="fill:var(--v3)" />
+<text class="val-label" x="122.0" y="767.0" style="fill:var(--v3)">3</text>
+<line class="leader" x1="129.5" y1="776.0" x2="532.0" y2="776.0" />
+<text class="path-label" x="538.0" y="780.0">[3]</text>
+</g>
+</g>
+
+<g class="legend" transform="translate(34,1220)">
+  <rect x="0" y="0" width="832" height="118" fill="#faf8f2" stroke="#e4ddcd" rx="8" />
+  <text class="section-title" x="16" y="22">Legend</text>
+  <circle cx="26" cy="42" r="5.5" fill="#3465c8" stroke="#fff" stroke-width="1.4" /><text class="path-label" x="40" y="46">value 1</text>
+  <circle cx="126" cy="42" r="5.5" fill="#b8791a" stroke="#fff" stroke-width="1.4" /><text class="path-label" x="140" y="46">value 2</text>
+  <circle cx="226" cy="42" r="5.5" fill="#7a4fc4" stroke="#fff" stroke-width="1.4" /><text class="path-label" x="240" y="46">value 3</text>
+  <circle cx="326" cy="42" r="5.5" fill="#6b6455" stroke="#fff" stroke-width="1.4" /><text class="path-label" x="340" y="46">root / empty subset</text>
+  <line x1="18" y1="70" x2="34" y2="70" class="conn" /><text class="path-label" x="40" y="74">taken &#8594; recurse (surviving branch)</text>
+  <line x1="18" y1="94" x2="34" y2="102" class="prune-stub" /><text class="prune-x" x="37" y="105">&#10005;</text><text class="prune-label" x="46" y="105">value &#215;N dup &#8212; loop iteration skipped, no recursion</text>
+  <text class="subtitle" x="502" y="46" style="font-style:italic">every node also emits its own path as a subset,</text>
+  <text class="subtitle" x="502" y="62" style="font-style:italic">not only the leaves &#8212; dotted leader &#8594; output</text>
+</g>
+
+</svg>
