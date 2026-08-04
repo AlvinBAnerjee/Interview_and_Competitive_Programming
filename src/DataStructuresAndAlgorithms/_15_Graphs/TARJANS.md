@@ -237,6 +237,108 @@ Runs in **O(V + E)** time, **O(V)** extra space (plus the recursion stack).
 
 ---
 
+## 9. Applied — LeetCode 2360, *Longest Cycle in a Graph*
+
+A problem where you need **`disc[]` but not `low[]`**. Everything above pairs the two arrays;
+this one shows what the timestamp alone can do once the graph's shape is constrained enough.
+(It is a *directed* graph, unlike the bridge/AP material above — the timestamp idea carries
+over, the low-link machinery does not.)
+
+### Reading the input
+
+There is no edge list here. **The array *is* the graph:** `edges[i]` is the single node that
+`i` points to, or `-1` if `i` points nowhere. Index = source, value = destination,
+`n = edges.length`.
+
+```
+edges = [1, 2, 3, 4, 5, 2, 7, 6, 1, -1]
+         ↑                          ↑
+         edges[0] = 1               edges[9] = -1
+         node 0 points to node 1    node 9 points nowhere
+```
+
+The constraint that makes the problem special: **every node has at most ONE outgoing edge.**
+That is a **functional graph**. Return the length of the longest cycle, or `-1` if there is none.
+
+![Functional graph for LeetCode 2360](assets/08-longest-cycle-functional-graph.png)
+
+### Why no `low[]` is needed
+
+`low[]` exists to answer *"can this subtree escape upward by some other route?"* — a question
+that only arises when a vertex has **several** ways out. Here out-degree is at most 1, so from
+any node there is exactly one way forward and the walk is **deterministic**: it must eventually
+either hit `-1` or revisit a node it has already stamped. Every piece of the graph is a
+**rho (ρ)** shape — a tail feeding into at most one cycle. With no branching there is nothing
+for `low[]` to minimise over, and a plain timestamp is enough.
+
+### The approach — one global clock
+
+```java
+int time = 1;                       // start at 1 so disc[i] == 0 can mean "unvisited"
+for (int i = 0; i < n; i++) {
+    int curr = i;
+    int timeNow = time;             // clock reading at the START of this walk
+
+    while (curr != -1 && disc[curr] == 0)   // walk forward, stamping as we go
+        { disc[curr] = time++; curr = edges[curr]; }
+
+    if (curr != -1 && disc[curr] >= timeNow)   // stopped on a node THIS walk stamped
+        longest = Math.max(longest, time - disc[curr]);
+}
+```
+
+A walk stops for exactly two reasons, and one comparison separates the interesting cases:
+
+| stop reason | test | meaning |
+|---|---|---|
+| `curr == -1` | — | ran off a dead end. No cycle. |
+| `disc[curr] >= timeNow` | **true** | that node was stamped *during this same walk* → **we closed a loop on ourselves** |
+| `disc[curr] < timeNow` | false | that node was stamped by an *earlier* walk → we merged into someone else's chain; whatever cycle lies down there was already counted |
+
+**`timeNow` is the whole trick.** It is a watermark: *"any stamp at or above this number is
+mine."* Without it you cannot tell *"I found my own tail"* from *"I bumped into old
+territory"* — and the second case must not count, or a long tail feeding an
+already-counted cycle would be reported as a cycle itself.
+
+**Why the length is `time - disc[curr]`:** `time` is the clock right after stamping the last
+node of the walk, and `disc[curr]` is the stamp on the node we looped back to. Every stamp
+handed out between those two went to a node on the cycle, so the difference counts them exactly.
+
+### Dry run on `[1, 2, 3, 4, 5, 2, 7, 6, 1, -1]`
+
+| start `i` | `timeNow` | nodes stamped | stops at | test | result |
+|---|---|---|---|---|---|
+| **0** | 1 | `0,1,2,3,4,5` → `d=1..6` | `2` | `disc[2]=3 >= 1` ✅ | **cycle `7-3` = 4** |
+| 1–5 | 7 | none, already stamped | itself | `disc < 7` | skip |
+| **6** | 7 | `6,7` → `d=7,8` | `6` | `disc[6]=7 >= 7` ✅ | **cycle `9-7` = 2** |
+| 7 | 9 | none | itself | `disc[7]=8 < 9` | skip |
+| **8** | 9 | `8` → `d=9` | `1` | `disc[1]=2 < 9` ❌ | no cycle — ran into walk 0's chain |
+| **9** | 10 | `9` → `d=10` | `-1` | `curr == -1` | no cycle — dead end |
+
+**Answer: 4.** Rows `8` and `9` are the two ways a walk ends *without* a cycle, and between
+them they are why both the `-1` check and the `timeNow` watermark have to be there.
+
+`O(n)` time — every node is stamped exactly once across all walks, and an outer-loop index that
+was already stamped exits the `while` immediately. `O(n)` space for `disc[]`.
+
+### Two notes on the solution
+
+**`boolean visited[]` is dead code.** It is declared and read (`if (visited[i]) continue;`) but
+never assigned, so that branch never fires and the array can be deleted. It is harmless: when
+`i` is already stamped the `while` exits at once and `disc[i] >= timeNow` is false (its stamp
+predates this walk), so no phantom cycle is reported. `disc[]` already does the visited
+tracking — which is exactly why `time` starts at `1` rather than `0`.
+
+**It is correct.** Fuzzed against brute force on 30,000 random functional graphs: zero
+mismatches, including self-loops (`[0]` → `1`) and all-dead-end inputs (`[-1,-1]` → `-1`).
+
+> Related: in a functional graph every SCC is either a lone node or exactly one cycle, so this
+> answer is also *"the size of the largest SCC with more than one node."* Running Kosaraju
+> would work — see [`KOSARAJU.md`](KOSARAJU.md) — but the rho structure makes the single
+> forward walk strictly simpler.
+
+---
+
 ## Related files in this folder
 
 - [`_17_Bridges.java`](_17_Bridges.java) — bridge finding

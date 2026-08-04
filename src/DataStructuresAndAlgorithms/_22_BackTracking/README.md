@@ -70,15 +70,27 @@ the loop (`i == idx`) would just re-derive a branch already produced by
 
 ### Watching it happen — `Subset2`'s recursion tree
 
-The diagram below runs the exact `rec` code above top to bottom on
-`nums = [1,1,1]` and `nums = [1,1,1,2,2,3]`. Solid edges are loop
-iterations that took a value and recursed; dashed **red** edges are the
-iterations `i != idx && arr[i] == arr[i - 1]` prunes — the loop skips them
-outright, so no call, no subtree, no duplicate leaves. Bracket labels mark
-terminal subsets; every node above a leaf is also a valid emitted subset,
-readable by tracing the edge values from the root down to it.
+The diagram runs the exact `rec` code above, top to bottom. Every box is a
+subset that gets emitted, so reading the boxes *is* reading the output. Each
+edge is one loop iteration that took a value, shown in the badge on the edge.
+Dashed **red** branches are the iterations `i != idx && arr[i] == arr[i - 1]`
+prunes — the loop skips them outright, so no call, no subtree, no duplicate.
 
-<img src="./assets/duplicate-pruning-tree.svg" alt="Subset2 recursion tree, top to bottom, showing duplicate pruning in red for [1,1,1] and [1,1,1,2,2,3]">
+![Subset2 recursion tree for [1,1,2] and [1,1,1], with pruned branches in red](./assets/duplicate-pruning-tree.png)
+
+`[1,1,2]` loses exactly one branch: taking the second `1` at the root would
+re-derive the whole subtree the first `1` already built. `[1,1,1]` is the
+extreme case — every iteration after the first is a duplicate at every level,
+so the tree collapses to a single spine of four subsets.
+
+The same rule on a longer input, where the pruning does more work:
+
+![Subset2 recursion tree for [1,1,1,2,2,3], 24 subsets with 7 iterations pruned](./assets/duplicate-pruning-tree-large.png)
+
+There each node carries just the value appended on the edge above it — read any
+node's subset by tracing the badges from the root down — and the full subset is
+spelled out under every leaf. A `✗N` chip marks an iteration skipped at that
+node; because a pruned iteration never recurses, it adds no width to the tree.
 
 ### Pattern B — pick/skip (or used[]) DFS, prune with `!used[i - 1]`
 
