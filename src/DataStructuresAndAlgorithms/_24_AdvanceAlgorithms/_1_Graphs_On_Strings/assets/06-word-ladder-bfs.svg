@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#fcfcfb"/>
+<defs>
+<marker id="ar-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8577"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2a78d6"/></marker>
+<marker id="ar-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c9791a"/></marker>
+</defs>
+<text x="24" y="32" font-size="17" fill="#0b0b0b" font-weight="700">Word Ladder — BFS over an implicit graph (one-letter-diff = edge)</text>
+<text x="24" y="53" font-size="13" fill="#52514e">beginWord="hit", endWord="cog", wordList=[hot,dot,dog,lot,log,cog]. A word is enqueued once — the level it's first reached at is its shortest distance from hit.</text>
+
+<g font-size="12" fill="#8a8577" text-anchor="middle">
+<text x="110" y="90">level 0</text>
+<text x="310" y="90">level 1</text>
+<text x="510" y="90">level 2</text>
+<text x="710" y="90">level 3</text>
+<text x="910" y="90">level 4</text>
+</g>
+
+<!-- edges -->
+<g stroke-width="2.4" fill="none">
+<line x1="136" y1="220" x2="284" y2="220" stroke="#8a8577" marker-end="url(#ar-ink)"/>
+<line x1="336" y1="208" x2="484" y2="150" stroke="#2a78d6" marker-end="url(#ar-blue)"/>
+<line x1="336" y1="232" x2="484" y2="290" stroke="#c9791a" marker-end="url(#ar-orange)"/>
+<line x1="536" y1="140" x2="684" y2="140" stroke="#2a78d6" marker-end="url(#ar-blue)"/>
+<line x1="536" y1="300" x2="684" y2="300" stroke="#c9791a" marker-end="url(#ar-orange)"/>
+<line x1="736" y1="150" x2="884" y2="208" stroke="#2a78d6" marker-end="url(#ar-blue)"/>
+<line x1="736" y1="290" x2="884" y2="232" stroke="#c9791a" marker-end="url(#ar-orange)"/>
+</g>
+
+<g font-family="ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle">
+<circle cx="110" cy="220" r="26" fill="#e4ddcd" stroke="#52514e" stroke-width="1.8"/><text x="110" y="226" fill="#2a2620">hit</text>
+<circle cx="310" cy="220" r="26" fill="#f0efec" stroke="#52514e" stroke-width="1.8"/><text x="310" y="226" fill="#2a2620">hot</text>
+<circle cx="510" cy="140" r="26" fill="#f0efec" stroke="#52514e" stroke-width="1.8"/><text x="510" y="146" fill="#2a2620">dot</text>
+<circle cx="510" cy="300" r="26" fill="#f0efec" stroke="#52514e" stroke-width="1.8"/><text x="510" y="306" fill="#2a2620">lot</text>
+<circle cx="710" cy="140" r="26" fill="#f0efec" stroke="#52514e" stroke-width="1.8"/><text x="710" y="146" fill="#2a2620">dog</text>
+<circle cx="710" cy="300" r="26" fill="#f0efec" stroke="#52514e" stroke-width="1.8"/><text x="710" y="306" fill="#2a2620">log</text>
+<circle cx="910" cy="220" r="26" fill="#1baf7a" stroke="#1baf7a" stroke-width="1.8"/><text x="910" y="226" fill="#ffffff">cog</text>
+</g>
+
+<text x="24" y="368" font-size="12.5" fill="#6b6455">Two neighbours differing by one letter from "hot" both survive to "cog" — ladderLength returns level+1 = 5 the instant "cog" is dequeued,</text>
+<text x="24" y="386" font-size="12.5" fill="#6b6455">without caring which of the two (blue / orange) routes got there. Word Ladder II (next diagram) is what recovers both.</text>
+</svg>

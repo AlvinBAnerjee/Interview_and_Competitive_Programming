@@ -26,6 +26,7 @@ void rec(/* state */) {
 | `_5_CombinationSum1.java` | Combinations summing to target, unlimited reuse | No |
 | `_6_CombinationSum2.java` | Combinations summing to target, each element used once, **unique** combos | **Yes** |
 | `_7_Combination.java` | All k-size combinations of `1..n` | No |
+| `_8_TilePossibilities.java` | Count of non-empty sequences from a multiset of letters | **Yes** |
 
 The "1" variants pick/skip or swap freely. The "2" variants (plus
 `CombinationSum2`) additionally have to **prune duplicate branches** so the

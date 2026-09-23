@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 465" width="900" height="465" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#fcfcfb"/>
+<defs>
+<marker id="ar-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8577"/></marker>
+</defs>
+<text x="24" y="32" font-size="17" fill="#0b0b0b" font-weight="700">One Trie for words = ["oath","pea","eat","rain"]</text>
+<text x="24" y="53" font-size="13" fill="#52514e">A single DFS from a board cell now explores every word sharing that prefix at once. Filled nodes are isEnd — a word is complete there.</text>
+
+<g stroke="#8a8577" stroke-width="1.6" fill="none" marker-end="url(#ar-ink)">
+<line x1="450" y1="111" x2="177" y2="143"/>
+<line x1="450" y1="111" x2="368" y2="143"/>
+<line x1="450" y1="111" x2="532" y2="143"/>
+<line x1="450" y1="111" x2="723" y2="143"/>
+
+<line x1="164" y1="167" x2="164" y2="203"/>
+<line x1="355" y1="167" x2="355" y2="203"/>
+<line x1="545" y1="167" x2="545" y2="203"/>
+<line x1="736" y1="167" x2="736" y2="203"/>
+
+<line x1="164" y1="227" x2="164" y2="263"/>
+<line x1="355" y1="227" x2="355" y2="263"/>
+<line x1="545" y1="227" x2="545" y2="263"/>
+<line x1="736" y1="227" x2="736" y2="263"/>
+
+<line x1="164" y1="287" x2="164" y2="323"/>
+<line x1="736" y1="287" x2="736" y2="323"/>
+</g>
+
+<circle cx="450" cy="95" r="20" fill="#e4ddcd" stroke="#52514e" stroke-width="1.6"/>
+<text x="450" y="100" text-anchor="middle" font-size="12" fill="#3a352c" font-weight="700">•</text>
+
+<g font-size="17" font-weight="700" text-anchor="middle" font-family="ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace">
+<circle cx="164" cy="155" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="164" y="161" fill="#2a2620">o</text>
+<circle cx="355" cy="155" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="355" y="161" fill="#2a2620">p</text>
+<circle cx="545" cy="155" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="545" y="161" fill="#2a2620">e</text>
+<circle cx="736" cy="155" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="736" y="161" fill="#2a2620">r</text>
+
+<circle cx="164" cy="215" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="164" y="221" fill="#2a2620">a</text>
+<circle cx="355" cy="215" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="355" y="221" fill="#2a2620">e</text>
+<circle cx="545" cy="215" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="545" y="221" fill="#2a2620">a</text>
+<circle cx="736" cy="215" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="736" y="221" fill="#2a2620">a</text>
+
+<circle cx="164" cy="275" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="164" y="281" fill="#2a2620">t</text>
+<circle cx="355" cy="275" r="20" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="1.6"/><text x="355" y="281" fill="#ffffff">a</text>
+<circle cx="545" cy="275" r="20" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="1.6"/><text x="545" y="281" fill="#ffffff">t</text>
+<circle cx="736" cy="275" r="20" fill="#f0efec" stroke="#52514e" stroke-width="1.6"/><text x="736" y="281" fill="#2a2620">i</text>
+
+<circle cx="164" cy="335" r="20" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="1.6"/><text x="164" y="341" fill="#ffffff">h</text>
+<circle cx="736" cy="335" r="20" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="1.6"/><text x="736" y="341" fill="#ffffff">n</text>
+</g>
+
+<g font-size="12.5" fill="#4a3aa7" font-weight="700" font-family="ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace">
+<text x="164" y="370" text-anchor="middle">"oath"</text>
+<text x="355" y="310" text-anchor="middle">"pea"</text>
+<text x="545" y="310" text-anchor="middle">"eat"</text>
+<text x="736" y="370" text-anchor="middle">"rain"</text>
+</g>
+
+<text x="24" y="420" font-size="12" fill="#6b6455">isEnd is cleared the instant a word is reported (curr.isEnd = false) so findWords never emits the same word twice.</text>
+</svg>

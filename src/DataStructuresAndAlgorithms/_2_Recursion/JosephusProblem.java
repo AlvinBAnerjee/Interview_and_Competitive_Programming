@@ -10,4 +10,8 @@ public class JosephusProblem {
 
         return (rec(n-1,k) + k)%n;
     }
+
+    static void main() {
+        System.out.println(new JosephusProblem().findTheWinner(5,5));
+    }
 }

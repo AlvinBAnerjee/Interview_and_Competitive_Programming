@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ClaudeCodeEditorTabs">
-    <option name="activeSessionId" value="18b23225-cef5-468f-8bb8-13b6c4549bf1" />
+    <option name="activeSessionId" value="1972a13d-9213-4445-b306-cc290dacad2a" />
     <option name="openSessionIds">
       <list>
         <option value="18b23225-cef5-468f-8bb8-13b6c4549bf1" />
+        <option value="9d42fdc8-9902-44c9-984b-e67a6cf389c3" />
+        <option value="06b52afa-47fa-4a2a-a91d-2bc26cb46db3" />
+        <option value="76657b75-c93a-4e36-afa5-e93148573a91" />
+        <option value="686d11ae-2fce-432c-9a7a-d0b4ee63d4c0" />
+        <option value="7f0630c8-8c14-4b3f-82e8-2548cfb12311" />
+        <option value="d40a0eb0-bf8c-40e2-9848-3b4f8c23117b" />
+        <option value="1972a13d-9213-4445-b306-cc290dacad2a" />
       </list>
     </option>
     <option name="sessionPaths">
       <map>
+        <entry key="06b52afa-47fa-4a2a-a91d-2bc26cb46db3" value="/sessions/36456ce5-e929-4441-b914-48574db60cd7" />
         <entry key="18b23225-cef5-468f-8bb8-13b6c4549bf1" value="/sessions/c40fdf5a-4e5c-49b4-87db-d2f62473c4cc" />
+        <entry key="1972a13d-9213-4445-b306-cc290dacad2a" value="/sessions/9d87c263-40c5-4304-b015-d30f9049e440" />
+        <entry key="686d11ae-2fce-432c-9a7a-d0b4ee63d4c0" value="/sessions/6206f30b-def8-4fd8-ac2a-be69d883eccf" />
+        <entry key="76657b75-c93a-4e36-afa5-e93148573a91" value="/sessions/9dd05e88-25bd-42bd-8836-f0c4f5458135" />
+        <entry key="7f0630c8-8c14-4b3f-82e8-2548cfb12311" value="/sessions/4a185fd6-c658-4206-860a-aa0a4cd6ae44" />
+        <entry key="9d42fdc8-9902-44c9-984b-e67a6cf389c3" value="/sessions/7958e13b-f072-4537-8ebb-05fb4b5f7321" />
+        <entry key="d40a0eb0-bf8c-40e2-9848-3b4f8c23117b" value="/sessions/534e6470-433b-4f8d-986d-38549752d335" />
       </map>
     </option>
     <option name="sessionTitles">
       <map>
+        <entry key="06b52afa-47fa-4a2a-a91d-2bc26cb46db3" value="class Solution { int n; int m; int x[][]={{1,0}, {" />
         <entry key="18b23225-cef5-468f-8bb8-13b6c4549bf1" value="pull the latest changes" />
+        <entry key="1972a13d-9213-4445-b306-cc290dacad2a" value="cached vs fixed threadpool" />
+        <entry key="686d11ae-2fce-432c-9a7a-d0b4ee63d4c0" value="class Solution { int n; int m; int x[][]={{1,0}, {" />
+        <entry key="76657b75-c93a-4e36-afa5-e93148573a91" value="class Solution { int n; int m; int x[][]={{1,0}, {" />
+        <entry key="7f0630c8-8c14-4b3f-82e8-2548cfb12311" value="class Solution { int n; int m; int x[][]={{1,0}, {" />
+        <entry key="9d42fdc8-9902-44c9-984b-e67a6cf389c3" value="class Solution { int p[][]; int dp[][]; public int" />
+        <entry key="d40a0eb0-bf8c-40e2-9848-3b4f8c23117b" value="in the lld section can you come up with a simple n" />
       </map>
     </option>
   </component>
