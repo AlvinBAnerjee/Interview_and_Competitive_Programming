@@ -4,9 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,13 +15,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.factory.VehicleFactory;
-import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.ParkingFloor;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.ParkingSlot;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Ticket;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Vehicle;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.VehicleType;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.HourlyPricingStrategy;
-import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.NearestSlotStrategy;
 
 /**
  * Tests, written as a plain main() because this repo does not use JUnit.
@@ -53,7 +49,7 @@ public class ParkingLotTest {
 
     /** Nearest means lowest floor first, then lowest slot number, and it spans floors. */
     private static void nearestSlotIsGivenOutFirst() {
-        ParkingLot lot = newLot(2, carSlotsPerFloor(2));   // 2 floors x 2 car slots
+        ParkingLot lot = newLot(2, 2);   // 2 floors x 2 car slots
 
         String first = parkCar(lot).getSlot().getId();
         String second = parkCar(lot).getSlot().getId();
@@ -66,7 +62,7 @@ public class ParkingLotTest {
 
     /** A full lot returns empty instead of throwing or double-booking. */
     private static void fullLotTurnsVehiclesAwayCleanly() {
-        ParkingLot lot = newLot(1, carSlotsPerFloor(2));   // room for 2 cars
+        ParkingLot lot = newLot(1, 2);   // room for 2 cars
 
         Optional<Ticket> firstCar = lot.park(newCar("A"));
         Optional<Ticket> secondCar = lot.park(newCar("B"));
@@ -81,7 +77,7 @@ public class ParkingLotTest {
 
     /** Re-using a ticket must be rejected, and must not free the slot twice. */
     private static void sameTicketCannotBeUsedTwice() {
-        ParkingLot lot = newLot(1, carSlotsPerFloor(1));
+        ParkingLot lot = newLot(1, 1);
         Ticket ticket = parkCar(lot);
 
         lot.unpark(ticket);                       // first exit is fine
@@ -123,7 +119,7 @@ public class ParkingLotTest {
     private static void manyThreadsNeverGetTheSameSlot() throws InterruptedException {
         int capacity = 200;
         int threadCount = capacity * 4;
-        ParkingLot lot = newLot(1, carSlotsPerFloor(capacity));
+        ParkingLot lot = newLot(1, capacity);
 
         ExecutorService pool = Executors.newFixedThreadPool(64);
         CountDownLatch startSignal = new CountDownLatch(1);      // holds every thread back
@@ -184,19 +180,15 @@ public class ParkingLotTest {
 
     // ---------- small helpers ----------
 
-    /** A fresh, isolated lot: nearest-slot allocation + hourly pricing. */
-    private static ParkingLot newLot(int floorCount, Map<VehicleType, Integer> slotsPerFloor) {
-        List<ParkingFloor> floors = ParkingFloor.createFloors(floorCount, slotsPerFloor);
-        return new ParkingLot(floors,
-                new NearestSlotStrategy(floors),
-                HourlyPricingStrategy.withDefaults());
-    }
-
-    /** Car slots only — these tests do not need bikes or trucks. */
-    private static Map<VehicleType, Integer> carSlotsPerFloor(int carSlots) {
-        Map<VehicleType, Integer> slots = new EnumMap<>(VehicleType.class);
-        slots.put(VehicleType.CAR, carSlots);
-        return slots;
+    /**
+     * A fresh, isolated lot with car slots only (these tests need no bikes or trucks).
+     * build() rather than buildShared(), so tests never disturb each other.
+     */
+    private static ParkingLot newLot(int floorCount, int carSlotsPerFloor) {
+        return ParkingLot.builder()
+                .floors(floorCount)
+                .slotsPerFloor(VehicleType.CAR, carSlotsPerFloor)
+                .build();
     }
 
     private static Ticket parkCar(ParkingLot lot) {

@@ -1,7 +1,9 @@
 package MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem;
 
 import java.time.Instant;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,6 +14,8 @@ import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Ticket;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Vehicle;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.VehicleType;
+import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.HourlyPricingStrategy;
+import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.NearestSlotStrategy;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.PricingStrategy;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strategy.SlotAssignmentStrategy;
 
@@ -22,9 +26,9 @@ import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.strate
  *     which slot?  -> SlotAssignmentStrategy
  *     how much?    -> PricingStrategy
  *
- * SINGLETON: a real car park has exactly one lot, so configure() builds it once and
- * getInstance() hands that same one to everybody. The constructor stays public so tests
- * (and Main) can also build a throwaway lot without touching the shared one.
+ * SINGLETON: a real car park has exactly one lot, so builder().buildShared() creates it
+ * once and getInstance() hands that same one to everybody. builder().build() gives a
+ * throwaway lot instead, which is what the tests use so they can't disturb each other.
  *
  * THREADING: all the slot racing lives inside the slot strategy. The only shared state
  * here is activeTickets, a ConcurrentHashMap -- put on entry, remove on exit. Because
@@ -51,20 +55,84 @@ public final class ParkingLot {
         this.pricingStrategy = pricingStrategy;
     }
 
-    /** Builds the shared lot. Call this once at start-up. */
-    public static synchronized ParkingLot configure(List<ParkingFloor> floors,
-                                                    SlotAssignmentStrategy slotStrategy,
-                                                    PricingStrategy pricingStrategy) {
-        instance = new ParkingLot(floors, slotStrategy, pricingStrategy);
+    /** Start describing a lot. See {@link Builder}. */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /** The shared lot created by {@code builder().buildShared()}. */
+    public static synchronized ParkingLot getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Build the shared lot first: "
+                    + "ParkingLot.builder()...buildShared()");
+        }
         return instance;
     }
 
-    /** The shared lot created by configure(). */
-    public static synchronized ParkingLot getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Call ParkingLot.configure(...) first");
+    private static synchronized ParkingLot share(ParkingLot lot) {
+        instance = lot;
+        return lot;
+    }
+
+    /**
+     * BUILDER. Describes a lot in plain English and then assembles it:
+     *
+     *     ParkingLot lot = ParkingLot.builder()
+     *             .floors(2)
+     *             .slotsPerFloor(VehicleType.CAR, 3)
+     *             .buildShared();
+     *
+     * Its real job is hiding an ordering knot: the slot strategy needs the floors, and
+     * the lot needs both. Callers used to have to build those three things in exactly
+     * the right sequence; now they just say what they want.
+     *
+     * Anything you leave out gets a sensible default (nearest-slot allocation, hourly
+     * pricing), so a small lot is a two-line description.
+     */
+    public static final class Builder {
+
+        private int floorCount = 1;
+        private final Map<VehicleType, Integer> slotsPerFloor = new EnumMap<>(VehicleType.class);
+        private SlotAssignmentStrategy slotStrategy;      // default: nearest-slot
+        private PricingStrategy pricingStrategy;          // default: hourly
+
+        public Builder floors(int floorCount) {
+            this.floorCount = floorCount;
+            return this;
         }
-        return instance;
+
+        /** How many slots of this type EACH floor gets. */
+        public Builder slotsPerFloor(VehicleType type, int count) {
+            this.slotsPerFloor.put(type, count);
+            return this;
+        }
+
+        public Builder slotAssignment(SlotAssignmentStrategy slotStrategy) {
+            this.slotStrategy = slotStrategy;
+            return this;
+        }
+
+        public Builder pricing(PricingStrategy pricingStrategy) {
+            this.pricingStrategy = pricingStrategy;
+            return this;
+        }
+
+        /** Builds a standalone lot. Handy in tests, where lots must not affect each other. */
+        public ParkingLot build() {
+            List<ParkingFloor> floors = ParkingFloor.createFloors(floorCount, slotsPerFloor);
+
+            SlotAssignmentStrategy slots =
+                    (slotStrategy != null) ? slotStrategy : new NearestSlotStrategy(floors);
+            PricingStrategy pricing =
+                    (pricingStrategy != null) ? pricingStrategy : HourlyPricingStrategy.withDefaults();
+
+            return new ParkingLot(floors, slots, pricing);
+        }
+
+        /** Builds the lot AND makes it the one that getInstance() hands out. */
+        public ParkingLot buildShared() {
+            return share(build());
+        }
     }
 
     /**

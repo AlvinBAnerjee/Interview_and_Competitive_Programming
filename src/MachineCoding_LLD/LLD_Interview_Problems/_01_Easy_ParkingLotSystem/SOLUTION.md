@@ -2,8 +2,8 @@
 
 A multi-floor, multi-vehicle-type parking lot that parks at the **nearest** free slot,
 unparks with a computed fare, and stays correct under **concurrent gates**. Built around
-three GoF patterns (Singleton, Strategy, Factory) with the concurrency isolated into a
-single data structure.
+four GoF patterns (Singleton, Builder, Strategy, Factory) with the concurrency isolated
+into a single data structure.
 
 > Code lives in this folder under package
 > `MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem` (subpackages
@@ -20,16 +20,16 @@ each file only uses things you've already seen:
 | # | File | What you learn |
 |---|------|----------------|
 | 1 | [`Main.java`](./Main.java) | The whole story end to end: build a lot → park → exit → the slot gets reused. Start here. |
-| 2 | [`ParkingLot.java`](./ParkingLot.java) | `park()` and `unpark()`, each written as 3 numbered steps. This is the spine. |
+| 2 | [`ParkingLot.java`](./ParkingLot.java) | `park()` and `unpark()`, each written as 3 numbered steps. This is the spine. Its nested `Builder` is how a lot gets described. |
 | 3 | [`strategy/NearestSlotStrategy.java`](./strategy/NearestSlotStrategy.java) | Where "which slot?" and *all* the threading lives. |
 | 4 | [`strategy/HourlyPricingStrategy.java`](./strategy/HourlyPricingStrategy.java) | Where "how much?" lives. |
 | 5 | `model/*` | Plain data holders — no logic, safe to skim. |
 
-**The one-paragraph version:** a gate calls `lot.park(vehicle)`. The lot asks the slot
-strategy for a free slot, and if it gets one, writes a `Ticket` and remembers it. On the
-way out, `lot.unpark(ticket)` claims the ticket, asks the pricing strategy for the fare,
-and hands the slot back to the strategy. The lot itself makes no decisions — it just
-sequences the two strategies.
+**The one-paragraph version:** you describe a lot with `ParkingLot.builder()` and build it.
+A gate then calls `lot.park(vehicle)`; the lot asks the slot strategy for a free slot, and
+if it gets one, writes a `Ticket` and remembers it. On the way out, `lot.unpark(ticket)`
+claims the ticket, asks the pricing strategy for the fare, and hands the slot back to the
+strategy. The lot itself makes no decisions — it just sequences the two strategies.
 
 ---
 
@@ -45,6 +45,7 @@ triangle = **inheritance / interface realization**. Dashed = **dependency / uses
 | Role | Class | Responsibility |
 |------|-------|----------------|
 | Facade + **Singleton** | `ParkingLot` | The one entry point gates call: `park` / `unpark` / `availableSlots`. |
+| **Builder** | `ParkingLot.Builder` | Describes a lot (floors, slots per type, strategies) and assembles it. |
 | **Strategy** (allocation) | `SlotAssignmentStrategy` → `NearestSlotStrategy` | *Which* free slot to hand out — **and owns the free-slot bookkeeping**. |
 | **Strategy** (pricing) | `PricingStrategy` → `HourlyPricingStrategy`, `FlatRatePricingStrategy` | *How much* to charge. |
 | **Factory** | `VehicleFactory` | Turns a `VehicleType` into the right `Vehicle` subtype. |
@@ -116,7 +117,8 @@ free queue twice.
 | Strategy **owns** the free-slot data | Concentrates *all* race-prone code in one class — "thread-safe parking" = "thread-safe strategy". | Strategy is slightly fatter than a pure "pick" function. |
 | `ParkingSlot` has **no occupied flag** | The queue already answers "is it free?". One copy of the truth = nothing to keep in sync. | You can't ask a slot directly whether it's taken; you ask the strategy (`availableSlots`). |
 | `park` returns **`Optional<Ticket>`** | A full lot is an expected outcome, not exceptional. | Callers must handle empty (which is the point). |
-| Singleton with a **public constructor** | `configure()`/`getInstance()` give the one shared lot; the open constructor lets `Main` and the tests build throwaway lots that can't disturb it. | Not a "pure" private-ctor singleton — a deliberate trade for testability. |
+| **Fluent builder** for setup | The slot strategy needs the floors and the lot needs both, so hand-wiring forced callers into an exact 3-step order. The builder hides that and defaults the strategies. | One extra (small, nested) class. |
+| Singleton with a **public constructor** | `buildShared()`/`getInstance()` give the one shared lot; `build()` and the open constructor let `Main` and the tests make throwaway lots that can't disturb it. | Not a "pure" private-ctor singleton — a deliberate trade for testability. |
 | Pricing split from allocation | Pricing changes far more often than the physical model (OCP). | Two interfaces instead of one. |
 | One slot serves **one** vehicle type | Keeps the model simple and matches the brief. | No "car fits in a truck slot" fallback — noted as an extension. |
 

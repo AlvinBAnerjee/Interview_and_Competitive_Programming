@@ -13,6 +13,16 @@ classDiagram
         +availableSlots(VehicleType) int
     }
 
+    class Builder {
+        <<Builder>>
+        +floors(int) Builder
+        +slotsPerFloor(VehicleType, int) Builder
+        +slotAssignment(SlotAssignmentStrategy) Builder
+        +pricing(PricingStrategy) Builder
+        +build() ParkingLot
+        +buildShared() ParkingLot
+    }
+
     class SlotAssignmentStrategy {
         <<interface>>
         +allocate(VehicleType) Optional~ParkingSlot~
@@ -64,6 +74,8 @@ classDiagram
     class EntryGate
     class ExitGate
 
+    ParkingLot *-- Builder : nested class
+    Builder ..> ParkingLot : builds
     ParkingLot "1" o-- "1" SlotAssignmentStrategy : delegates allocation
     ParkingLot "1" o-- "1" PricingStrategy : delegates fare
     ParkingLot "1" *-- "many" ParkingFloor : owns

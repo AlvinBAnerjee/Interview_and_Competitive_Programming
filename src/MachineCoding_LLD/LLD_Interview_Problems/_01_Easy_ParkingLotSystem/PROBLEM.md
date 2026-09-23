@@ -36,6 +36,7 @@ int     availableSlots(VehicleType type)
 
 ## Design Patterns
 - **Singleton** — single `ParkingLot`.
+- **Builder** — describing a lot (floors, slots per type, strategies) before building it.
 - **Strategy** — `SlotAssignmentStrategy`, `PricingStrategy`.
 - **Factory** — vehicle / slot creation.
 
