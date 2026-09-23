@@ -3,9 +3,7 @@ package MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.gate;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.ParkingLot;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Ticket;
 
-/**
- * A physical exit gate. Redeems a ticket and returns the fare owed.
- */
+/** A physical exit gate. Redeems a ticket and returns the fare owed. */
 public class ExitGate {
 
     private final int id;

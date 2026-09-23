@@ -3,9 +3,12 @@ package MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model
 import java.time.Instant;
 
 /**
- * The record handed out at entry and redeemed at exit. Entry data is immutable;
- * {@code exitTime} and {@code fare} are filled in exactly once on unpark (guarded by
- * the lot's active-ticket map, so they can't be set twice).
+ * The slip handed out at entry and redeemed at exit.
+ *
+ * Entry details never change. exitTime and fare get filled in once, by
+ * ParkingLot.unpark(), which makes sure only one caller ever reaches that point for a
+ * given ticket. They are volatile so the thread that later reads the ticket sees the
+ * values the exiting thread wrote.
  */
 public class Ticket {
 
@@ -14,7 +17,7 @@ public class Ticket {
     private final ParkingSlot slot;
     private final Instant entryTime;
 
-    private volatile Instant exitTime;   // null until the vehicle exits
+    private volatile Instant exitTime;   // null until the vehicle leaves
     private volatile double fare;
 
     public Ticket(String id, Vehicle vehicle, ParkingSlot slot, Instant entryTime) {
@@ -24,8 +27,7 @@ public class Ticket {
         this.entryTime = entryTime;
     }
 
-    /** Stamps exit time and fare. Called once by {@code ParkingLot.unpark}; the lot's
-     *  active-ticket map guarantees a single winning caller, so no lock is needed here. */
+    /** Stamps the exit time and fare. Called once, from ParkingLot.unpark(). */
     public void close(Instant exitTime, double fare) {
         this.exitTime = exitTime;
         this.fare = fare;

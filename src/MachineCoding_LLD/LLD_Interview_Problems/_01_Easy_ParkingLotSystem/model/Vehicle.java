@@ -1,10 +1,8 @@
 package MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model;
 
 /**
- * A vehicle wanting to park. Abstract on purpose: the concrete subtypes
- * ({@link Motorcycle}, {@link Car}, {@link Truck}) are created through
- * {@code VehicleFactory}, which keeps {@code new} out of the client code and
- * gives us one place to evolve construction later.
+ * A vehicle that wants to park. The concrete subtypes (Motorcycle, Car, Truck) are
+ * created through VehicleFactory, so callers never write `new Car(...)`.
  */
 public abstract class Vehicle {
 

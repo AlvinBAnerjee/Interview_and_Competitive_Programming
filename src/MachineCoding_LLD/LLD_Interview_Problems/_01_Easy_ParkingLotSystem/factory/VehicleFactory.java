@@ -7,9 +7,8 @@ import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.VehicleType;
 
 /**
- * FACTORY pattern. Maps a {@link VehicleType} to the right concrete {@link Vehicle},
- * so callers (entry gates, tests) never do {@code new Car(...)} themselves. Add a new
- * vehicle type in exactly one place here.
+ * FACTORY pattern. Turns a VehicleType into the matching Vehicle subclass, so callers
+ * never write `new Car(...)`. Adding a vehicle type is a one-line change here.
  */
 public final class VehicleFactory {
 
@@ -17,10 +16,15 @@ public final class VehicleFactory {
     }
 
     public static Vehicle create(VehicleType type, String licensePlate) {
-        return switch (type) {
-            case MOTORCYCLE -> new Motorcycle(licensePlate);
-            case CAR        -> new Car(licensePlate);
-            case TRUCK      -> new Truck(licensePlate);
-        };
+        switch (type) {
+            case MOTORCYCLE:
+                return new Motorcycle(licensePlate);
+            case CAR:
+                return new Car(licensePlate);
+            case TRUCK:
+                return new Truck(licensePlate);
+            default:
+                throw new IllegalArgumentException("Unknown vehicle type: " + type);
+        }
     }
 }

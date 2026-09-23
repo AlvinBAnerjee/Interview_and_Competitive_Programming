@@ -12,6 +12,27 @@ single data structure.
 
 ---
 
+## 0. Where to start reading
+
+There are a lot of small files, but only one path through them. Read in this order and
+each file only uses things you've already seen:
+
+| # | File | What you learn |
+|---|------|----------------|
+| 1 | [`Main.java`](./Main.java) | The whole story end to end: build a lot → park → exit → the slot gets reused. Start here. |
+| 2 | [`ParkingLot.java`](./ParkingLot.java) | `park()` and `unpark()`, each written as 3 numbered steps. This is the spine. |
+| 3 | [`strategy/NearestSlotStrategy.java`](./strategy/NearestSlotStrategy.java) | Where "which slot?" and *all* the threading lives. |
+| 4 | [`strategy/HourlyPricingStrategy.java`](./strategy/HourlyPricingStrategy.java) | Where "how much?" lives. |
+| 5 | `model/*` | Plain data holders — no logic, safe to skim. |
+
+**The one-paragraph version:** a gate calls `lot.park(vehicle)`. The lot asks the slot
+strategy for a free slot, and if it gets one, writes a `Ticket` and remembers it. On the
+way out, `lot.unpark(ticket)` claims the ticket, asks the pricing strategy for the fare,
+and hands the slot back to the strategy. The lot itself makes no decisions — it just
+sequences the two strategies.
+
+---
+
 ## 1. Class model
 
 <img src="./assets/class-diagram.png" alt="Parking Lot class diagram" width="900">
@@ -27,7 +48,7 @@ triangle = **inheritance / interface realization**. Dashed = **dependency / uses
 | **Strategy** (allocation) | `SlotAssignmentStrategy` → `NearestSlotStrategy` | *Which* free slot to hand out — **and owns the free-slot bookkeeping**. |
 | **Strategy** (pricing) | `PricingStrategy` → `HourlyPricingStrategy`, `FlatRatePricingStrategy` | *How much* to charge. |
 | **Factory** | `VehicleFactory` | Turns a `VehicleType` into the right `Vehicle` subtype. |
-| Entities | `ParkingFloor`, `ParkingSlot`, `Vehicle`(+subtypes), `Ticket` | Plain data + a tiny bit of atomic slot state. |
+| Entities | `ParkingFloor`, `ParkingSlot`, `Vehicle`(+subtypes), `Ticket` | Plain data. `ParkingFloor.createFloors(...)` builds the floor/slot grid. |
 | Actors | `EntryGate`, `ExitGate` | Thin adapters over the lot — the reason concurrency matters. |
 
 ---
@@ -61,11 +82,26 @@ allocation is *one* atomic operation:
 - Empty queue → `null` → `Optional.empty()` → clean "lot full".
 - **Release** is `offer()` back into the queue, which re-inserts in nearest order.
 
-**Defence in depth:** each `ParkingSlot` also has an `AtomicBoolean occupied`. `occupy()`
-(CAS false→true) can only win once; `vacate()` (CAS true→false) only succeeds for a truly
-occupied slot — so a **double-unpark can't re-add a slot to the free pool twice**. The
-ticket lifecycle adds a third guard: `ConcurrentHashMap.remove()` on exit returns the ticket
-to exactly one caller, so a replayed/forged ticket is rejected.
+**One copy of the truth.** Notice what `ParkingSlot` does *not* have: any
+free/occupied flag. Whether a slot is taken is answered in exactly one place —
+is it in the queue or not?
+
+```
+in the queue      = free
+out of the queue  = taken
+```
+
+That matters more than it looks. A second copy of "is this free?" (say an
+`AtomicBoolean` on the slot) is a second thing that can disagree with the first, and
+you then have to reason about both staying in sync. With one copy there is nothing to
+keep in sync, so the entire concurrency argument fits in one sentence: *`poll()` is
+atomic, so two threads cannot be handed the same slot.*
+
+**The one other guard** is on the ticket, not the slot: `unpark` starts with
+`activeTickets.remove(id)`, and `ConcurrentHashMap.remove` returns the ticket to exactly
+one caller. So a replayed or forged ticket is rejected right there, before anything is
+released — which is what stops a double-exit from pushing the same slot back into the
+free queue twice.
 
 > **Critical section = just the `poll`/`offer`.** Fare calculation, ticket creation, and
 > map updates are all outside it — exactly what the problem statement asks for.
@@ -78,8 +114,9 @@ to exactly one caller, so a replayed/forged ticket is rejected.
 |----------|-----|-------------------------|
 | **`PriorityBlockingQueue` per type** for free slots | One structure gives atomic hand-out **and** nearest-first ordering. | `allocate`/`release` are `O(log n)`. A plain `ConcurrentLinkedQueue` is `O(1)` but loses nearest-ordering on release. |
 | Strategy **owns** the free-slot data | Concentrates *all* race-prone code in one class — "thread-safe parking" = "thread-safe strategy". | Strategy is slightly fatter than a pure "pick" function. |
+| `ParkingSlot` has **no occupied flag** | The queue already answers "is it free?". One copy of the truth = nothing to keep in sync. | You can't ask a slot directly whether it's taken; you ask the strategy (`availableSlots`). |
 | `park` returns **`Optional<Ticket>`** | A full lot is an expected outcome, not exceptional. | Callers must handle empty (which is the point). |
-| Singleton with **package-private constructor** | Keeps the single production instance *and* lets tests build isolated lots. | Not a "pure" private-ctor singleton; documented deliberately. |
+| Singleton with a **public constructor** | `configure()`/`getInstance()` give the one shared lot; the open constructor lets `Main` and the tests build throwaway lots that can't disturb it. | Not a "pure" private-ctor singleton — a deliberate trade for testability. |
 | Pricing split from allocation | Pricing changes far more often than the physical model (OCP). | Two interfaces instead of one. |
 | One slot serves **one** vehicle type | Keeps the model simple and matches the brief. | No "car fits in a truck slot" fallback — noted as an extension. |
 

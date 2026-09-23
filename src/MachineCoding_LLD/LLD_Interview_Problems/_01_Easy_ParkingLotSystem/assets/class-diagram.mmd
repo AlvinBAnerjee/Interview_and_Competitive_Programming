@@ -16,7 +16,7 @@ classDiagram
     class SlotAssignmentStrategy {
         <<interface>>
         +allocate(VehicleType) Optional~ParkingSlot~
-        +release(ParkingSlot) boolean
+        +release(ParkingSlot) void
         +availableSlots(VehicleType) int
     }
     class NearestSlotStrategy {
@@ -47,14 +47,13 @@ classDiagram
     class ParkingFloor {
         -int floorNumber
         -List~ParkingSlot~ slots
+        +createFloors(int, Map)$ List~ParkingFloor~
     }
     class ParkingSlot {
         -String id
         -int floorNumber
         -int slotNumber
-        -AtomicBoolean occupied
-        +occupy() boolean
-        +vacate() boolean
+        -VehicleType type
     }
     class Ticket {
         -String id
@@ -74,7 +73,7 @@ classDiagram
     SlotAssignmentStrategy <|.. NearestSlotStrategy
     PricingStrategy <|.. HourlyPricingStrategy
     PricingStrategy <|.. FlatRatePricingStrategy
-    NearestSlotStrategy ..> ParkingSlot : polls / offers
+    NearestSlotStrategy ..> ParkingSlot : holds free ones in a queue
 
     Vehicle <|-- Motorcycle
     Vehicle <|-- Car

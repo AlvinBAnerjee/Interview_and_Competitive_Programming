@@ -1,18 +1,20 @@
 package MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
- * One physical parking space. Serves a single {@link VehicleType}.
+ * One physical parking space. It serves a single VehicleType.
  *
- * <p>{@code slotNumber} doubles as a "distance from the entrance" proxy — lower means
- * nearer — so the nearest-slot strategy can order candidates by (floor, slotNumber).
+ * Notice there is NO free/occupied flag here, and that is deliberate. "Is this slot
+ * free?" is answered in exactly one place: the free-slot queue inside
+ * NearestSlotStrategy.
  *
- * <p>{@code occupied} is an {@link AtomicBoolean} so claiming/releasing a slot is a
- * lock-free compare-and-set. Even though the free-slot queue already hands each slot to
- * one thread, this flag is our second line of defence: {@link #occupy()} can only win
- * once, and {@link #vacate()} only succeeds for a slot that is actually occupied — which
- * is what makes a double-unpark a no-op instead of a corruption.
+ *     in the queue      = free
+ *     out of the queue  = taken
+ *
+ * One copy of the truth means there is no second copy that could disagree with it,
+ * which is what keeps the threading easy to follow.
+ *
+ * slotNumber doubles as "distance from the entrance" (0 = nearest); the nearest-slot
+ * ordering sorts on it.
  */
 public class ParkingSlot {
 
@@ -20,27 +22,12 @@ public class ParkingSlot {
     private final int floorNumber;
     private final int slotNumber;
     private final VehicleType type;
-    private final AtomicBoolean occupied = new AtomicBoolean(false);
 
     public ParkingSlot(String id, int floorNumber, int slotNumber, VehicleType type) {
         this.id = id;
         this.floorNumber = floorNumber;
         this.slotNumber = slotNumber;
         this.type = type;
-    }
-
-    /** Atomically claim this slot. Returns {@code true} only for the thread that won. */
-    public boolean occupy() {
-        return occupied.compareAndSet(false, true);
-    }
-
-    /** Atomically free this slot. Returns {@code false} if it was already free. */
-    public boolean vacate() {
-        return occupied.compareAndSet(true, false);
-    }
-
-    public boolean isOccupied() {
-        return occupied.get();
     }
 
     public String getId() {

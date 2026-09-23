@@ -7,9 +7,10 @@ import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Vehicle;
 
 /**
- * A physical entry gate. Deliberately thin — it just forwards to the lot. Its value is
- * conceptual: multiple gates share one {@link ParkingLot}, which is exactly the scenario
- * the thread-safe allocation must survive (two cars, two gates, one nearest slot).
+ * A physical entry gate. It only forwards the request to the lot.
+ *
+ * Why it exists at all: several gates share ONE ParkingLot and each runs on its own
+ * thread. That is exactly the situation slot allocation has to survive.
  */
 public class EntryGate {
 
@@ -21,6 +22,7 @@ public class EntryGate {
         this.lot = lot;
     }
 
+    /** Empty means the lot is full for this vehicle type. */
     public Optional<Ticket> park(Vehicle vehicle) {
         return lot.park(vehicle);
     }
