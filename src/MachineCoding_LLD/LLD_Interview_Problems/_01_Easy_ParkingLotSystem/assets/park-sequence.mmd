@@ -5,15 +5,14 @@ sequenceDiagram
     participant Gate as EntryGate
     participant Lot as ParkingLot
     participant SAS as NearestSlotStrategy
-    participant Q as PriorityBlockingQueue~free~
+    participant Q as PriorityBlockingQueue~free slots~
 
     Driver->>Gate: park(vehicle)
     Gate->>Lot: park(vehicle)
     Lot->>SAS: allocate(CAR)
     SAS->>Q: poll()  (atomic: nearest & remove)
     alt a free slot exists
-        Q-->>SAS: nearest slot
-        SAS->>SAS: slot.occupy() CAS false→true
+        Q-->>SAS: nearest slot (now removed from the queue)
         SAS-->>Lot: Optional[slot]
         Lot->>Lot: activeTickets.put(id, ticket)
         Lot-->>Gate: Optional[Ticket]

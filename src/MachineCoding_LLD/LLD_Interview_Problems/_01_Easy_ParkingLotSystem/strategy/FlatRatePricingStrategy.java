@@ -5,9 +5,10 @@ import java.time.Instant;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Ticket;
 
 /**
- * A second pricing scheme (flat fee per visit) that exists purely to prove the point:
- * you can swap the whole pricing policy without touching {@code ParkingLot} — that's the
- * Open/Closed win of the Strategy pattern.
+ * One flat fee per visit, however long you stay.
+ *
+ * It exists to prove the Strategy point: swapping this in for HourlyPricingStrategy
+ * needs zero changes inside ParkingLot.
  */
 public class FlatRatePricingStrategy implements PricingStrategy {
 

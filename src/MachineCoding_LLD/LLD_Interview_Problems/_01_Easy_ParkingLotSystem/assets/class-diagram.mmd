@@ -13,10 +13,20 @@ classDiagram
         +availableSlots(VehicleType) int
     }
 
+    class Builder {
+        <<Builder>>
+        +floors(int) Builder
+        +slotsPerFloor(VehicleType, int) Builder
+        +slotAssignment(SlotAssignmentStrategy) Builder
+        +pricing(PricingStrategy) Builder
+        +build() ParkingLot
+        +buildShared() ParkingLot
+    }
+
     class SlotAssignmentStrategy {
         <<interface>>
         +allocate(VehicleType) Optional~ParkingSlot~
-        +release(ParkingSlot) boolean
+        +release(ParkingSlot) void
         +availableSlots(VehicleType) int
     }
     class NearestSlotStrategy {
@@ -47,14 +57,13 @@ classDiagram
     class ParkingFloor {
         -int floorNumber
         -List~ParkingSlot~ slots
+        +createFloors(int, Map)$ List~ParkingFloor~
     }
     class ParkingSlot {
         -String id
         -int floorNumber
         -int slotNumber
-        -AtomicBoolean occupied
-        +occupy() boolean
-        +vacate() boolean
+        -VehicleType type
     }
     class Ticket {
         -String id
@@ -65,6 +74,8 @@ classDiagram
     class EntryGate
     class ExitGate
 
+    ParkingLot *-- Builder : nested class
+    Builder ..> ParkingLot : builds
     ParkingLot "1" o-- "1" SlotAssignmentStrategy : delegates allocation
     ParkingLot "1" o-- "1" PricingStrategy : delegates fare
     ParkingLot "1" *-- "many" ParkingFloor : owns
@@ -74,7 +85,7 @@ classDiagram
     SlotAssignmentStrategy <|.. NearestSlotStrategy
     PricingStrategy <|.. HourlyPricingStrategy
     PricingStrategy <|.. FlatRatePricingStrategy
-    NearestSlotStrategy ..> ParkingSlot : polls / offers
+    NearestSlotStrategy ..> ParkingSlot : holds free ones in a queue
 
     Vehicle <|-- Motorcycle
     Vehicle <|-- Car

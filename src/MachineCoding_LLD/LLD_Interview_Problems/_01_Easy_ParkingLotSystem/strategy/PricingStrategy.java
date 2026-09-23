@@ -5,12 +5,11 @@ import java.time.Instant;
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.Ticket;
 
 /**
- * STRATEGY for turning a parked duration into money. Decoupled from slot allocation on
- * purpose — pricing changes far more often than the physical model, and an interviewer
- * will always ask you to add a new pricing scheme.
+ * STRATEGY for turning parked time into money. Kept separate from slot allocation
+ * because pricing rules change far more often than the physical lot does.
  */
 public interface PricingStrategy {
 
-    /** Fare for a ticket given when the vehicle leaves. Never negative. */
+    /** Fare for this ticket, given when the vehicle left. Never negative. */
     double calculateFare(Ticket ticket, Instant exitTime);
 }

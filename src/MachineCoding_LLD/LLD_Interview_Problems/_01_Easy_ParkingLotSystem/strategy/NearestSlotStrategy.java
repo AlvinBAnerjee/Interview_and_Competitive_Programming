@@ -12,70 +12,61 @@ import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.
 import MachineCoding_LLD.LLD_Interview_Problems._01_Easy_ParkingLotSystem.model.VehicleType;
 
 /**
- * Hands out the slot nearest to an entrance — lowest floor first, then lowest slot
- * number — and does it thread-safely.
+ * Hands out the slot nearest the entrance: lowest floor first, then lowest slot number.
  *
- * <h3>The concurrency design (the heart of this problem)</h3>
- * Free slots for each {@link VehicleType} live in a {@link PriorityBlockingQueue} ordered
- * by (floor, slotNumber). That single data structure gives us three things at once:
- * <ul>
- *   <li><b>Nearest-first:</b> the queue head is always the globally nearest free slot.</li>
- *   <li><b>Atomic hand-out:</b> {@code poll()} removes-and-returns the head in one atomic
- *       step, so two threads at two gates can never receive the same slot — the classic
- *       race is gone without us writing a single {@code synchronized} block.</li>
- *   <li><b>Clean "full" signal:</b> {@code poll()} returns {@code null} when empty, which
- *       we surface as {@link Optional#empty()} — no exceptions for the expected full case.</li>
- * </ul>
- * The critical section is exactly the {@code poll}/{@code offer} on the queue; fare
- * calculation and ticket creation happen entirely outside it.
+ * HOW IT WORKS
+ * Each vehicle type gets its own queue of free slots, sorted by (floor, slotNumber).
+ * So the front of the CAR queue is always the nearest free car slot in the whole lot.
+ *
+ *     park    -> take the front slot OUT of the queue  (poll)
+ *     unpark  -> put the slot BACK into the queue      (offer)
+ *
+ * WHY IT IS THREAD-SAFE
+ * The queue is a PriorityBlockingQueue, and its poll() returns the front item and
+ * removes it as ONE atomic step. Two gates polling at the same instant are therefore
+ * handed two DIFFERENT slots, so the classic "both cars were given F0-CAR-0" bug cannot
+ * happen -- with no synchronized block and no lock of our own.
+ *
+ * An empty queue just returns null, which we report as "lot full" instead of an error.
  */
 public class NearestSlotStrategy implements SlotAssignmentStrategy {
 
-    private static final Comparator<ParkingSlot> NEAREST =
+    /** Nearest = lowest floor, then the lowest slot number on that floor. */
+    private static final Comparator<ParkingSlot> NEAREST_FIRST =
             Comparator.comparingInt(ParkingSlot::getFloorNumber)
                       .thenComparingInt(ParkingSlot::getSlotNumber);
 
-    private final Map<VehicleType, PriorityBlockingQueue<ParkingSlot>> freeByType =
+    private final Map<VehicleType, PriorityBlockingQueue<ParkingSlot>> freeSlotsByType =
             new EnumMap<>(VehicleType.class);
 
     public NearestSlotStrategy(List<ParkingFloor> floors) {
+        // One queue per vehicle type...
         for (VehicleType type : VehicleType.values()) {
-            freeByType.put(type, new PriorityBlockingQueue<>(16, NEAREST));
+            freeSlotsByType.put(type, new PriorityBlockingQueue<>(16, NEAREST_FIRST));
         }
+        // ...and at the start every slot is free.
         for (ParkingFloor floor : floors) {
             for (ParkingSlot slot : floor.getSlots()) {
-                freeByType.get(slot.getType()).offer(slot);
+                freeSlotsByType.get(slot.getType()).offer(slot);
             }
         }
     }
 
     @Override
     public Optional<ParkingSlot> allocate(VehicleType type) {
-        PriorityBlockingQueue<ParkingSlot> free = freeByType.get(type);
-        ParkingSlot slot;
-        // poll() is atomic, so normally the very first slot is ours. The loop + occupy()
-        // is belt-and-suspenders: it also holds if a slot were ever offered back twice.
-        while ((slot = free.poll()) != null) {
-            if (slot.occupy()) {
-                return Optional.of(slot);
-            }
-        }
-        return Optional.empty();
+        // poll() hands back the nearest free slot and removes it in one atomic step,
+        // so two threads can never receive the same slot. null = nothing left.
+        ParkingSlot slot = freeSlotsByType.get(type).poll();
+        return Optional.ofNullable(slot);
     }
 
     @Override
-    public boolean release(ParkingSlot slot) {
-        // vacate() only wins for a genuinely-occupied slot, so a double release can't
-        // push the same slot into the free queue twice.
-        if (slot.vacate()) {
-            freeByType.get(slot.getType()).offer(slot);
-            return true;
-        }
-        return false;
+    public void release(ParkingSlot slot) {
+        freeSlotsByType.get(slot.getType()).offer(slot);
     }
 
     @Override
     public int availableSlots(VehicleType type) {
-        return freeByType.get(type).size();
+        return freeSlotsByType.get(type).size();
     }
 }
