@@ -2,13 +2,6 @@ package MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.factory.PlayerFactory;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.model.Board;
@@ -16,7 +9,6 @@ import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.model.GameSta
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.model.Move;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.model.Player;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.model.Symbol;
-import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.server.GameServer;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.strategy.LastMoveScanStrategy;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.strategy.RuleBasedBotStrategy;
 import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.strategy.RunningCounterStrategy;
@@ -27,15 +19,14 @@ import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.strategy.Winn
  * PASS/FAIL; the process exits non-zero if anything fails so {@code &&} chains / CI catch it.
  *
  * Covers: win detection on every axis (both strategies), draw, all four illegal-move rejections,
- * counter-vs-scan agreement over 500 random games, K&lt;N non-line wins, the smart bot's
- * win/block priority, and a concurrency test driving many games through the actor-based
- * {@link GameServer} at once.
+ * counter-vs-scan agreement over 500 random games, K&lt;N non-line wins, and the smart bot's
+ * win/block priority.
  */
 public final class TicTacToeTest {
 
     private static int failures = 0;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         testRowWin();
         testColumnWin();
         testDiagonalWin();
@@ -47,7 +38,6 @@ public final class TicTacToeTest {
         testCounterStrategyRejectsKLessThanN();
         testSmartBotTakesWinOverBlock();
         testSmartBotBlocks();
-        testConcurrentGamesOnServer();
 
         System.out.println();
         if (failures == 0) {
@@ -204,79 +194,6 @@ public final class TicTacToeTest {
         board.placeAndCheckWin(1, 1, Symbol.O);
         Move m = new RuleBasedBotStrategy(1L).chooseMove(board, Symbol.O);
         check("smart bot blocks the opponent's win", m.equals(new Move(0, 2)), m.toString());
-    }
-
-    /**
-     * Concurrency: host many games on the {@link GameServer} and drive them all at once. Each game
-     * is confined to its own thread, so the concurrent result must equal the single-threaded
-     * reference for every game — proving the actor routing keeps each board consistent.
-     */
-    private static void testConcurrentGamesOnServer() throws InterruptedException {
-        int games = 300;
-
-        // Reference: single-threaded playouts.
-        List<List<Move>> scripts = new ArrayList<>();
-        List<Outcome> reference = new ArrayList<>();
-        for (int i = 0; i < games; i++) {
-            List<Move> moves = randomPlayout(3, 3, i);
-            scripts.add(moves);
-            reference.add(replay(3, 3, new RunningCounterStrategy(3), moves));
-        }
-
-        AtomicInteger mismatches = new AtomicInteger();
-        AtomicInteger errors = new AtomicInteger();
-        ConcurrentHashMap<String, Boolean> completed = new ConcurrentHashMap<>();
-
-        try (GameServer server = new GameServer()) {
-            List<Player> xs = new ArrayList<>();
-            List<Player> os = new ArrayList<>();
-            for (int i = 0; i < games; i++) {
-                Player x = dummy("X", Symbol.X);
-                Player o = dummy("O", Symbol.O);
-                xs.add(x);
-                os.add(o);
-                server.host("g-" + i, new Game(new Board(3, 3, new RunningCounterStrategy(3)), x, o));
-            }
-
-            ExecutorService clients = Executors.newFixedThreadPool(32);
-            for (int i = 0; i < games; i++) {
-                final int idx = i;
-                clients.submit(() -> {
-                    try {
-                        List<Move> moves = scripts.get(idx);
-                        GameStatus status = GameStatus.IN_PROGRESS;
-                        for (int m = 0; m < moves.size(); m++) {
-                            Player mover = (m % 2 == 0) ? xs.get(idx) : os.get(idx);
-                            Move move = moves.get(m);
-                            CompletableFuture<GameStatus> f =
-                                    server.submitMove("g-" + idx, mover, move.row(), move.col());
-                            status = f.get(); // await this game's actor thread
-                            if (status.isTerminal()) {
-                                break;
-                            }
-                        }
-                        Outcome ref = reference.get(idx);
-                        if (status != ref.status) {
-                            mismatches.incrementAndGet();
-                        }
-                        completed.put("g-" + idx, true);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        errors.incrementAndGet();
-                    } catch (ExecutionException e) {
-                        errors.incrementAndGet();
-                    }
-                });
-            }
-            clients.shutdown();
-            clients.awaitTermination(30, TimeUnit.SECONDS);
-        }
-
-        check("all concurrent games completed", completed.size() == games,
-                completed.size() + "/" + games);
-        check("no errors driving concurrent games", errors.get() == 0, errors.get() + " errors");
-        check("concurrent results match single-threaded reference", mismatches.get() == 0,
-                mismatches.get() + " mismatches");
     }
 
     // ================= helpers =================

@@ -21,7 +21,7 @@ preparation, ordered by difficulty. Each folder contains a `PROBLEM.md` with:
 |---|---------|-----------|--------------------------|--------------|
 | 1 | [Parking Lot System](./_01_Easy_ParkingLotSystem/PROBLEM.md) · ✅ [**Solution**](./_01_Easy_ParkingLotSystem/SOLUTION.md) | Easy | 🟡 Medium — concurrent park/unpark, slot allocation | Strategy, Factory, Singleton, Builder |
 | 2 | [Vending Machine](./_02_Easy_VendingMachine/PROBLEM.md) · ✅ [**Solution**](./_02_Easy_VendingMachine/SOLUTION.md) | Easy | 🟢 Low — single-user state machine | State |
-| 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) · ✅ [**Solution**](./_03_Easy_TicTacToe/SOLUTION.md) | Easy | 🟢 Low — one game turn-based; 🟡 across many games (actor per game) | Strategy, Factory, Observer |
+| 3 | [Tic-Tac-Toe](./_03_Easy_TicTacToe/PROBLEM.md) · ✅ [**Solution**](./_03_Easy_TicTacToe/SOLUTION.md) | Easy | 🟢 Low — one game turn-based | Strategy, Factory, Observer |
 | 4 | [LRU Cache](./_04_Easy_LRUCache/PROBLEM.md) · ✅ [**Solution**](./_04_Easy_LRUCache/SOLUTION.md) | Easy | 🔴 **High** — thread-safe get/put under contention (lock striping) | Strategy, Proxy, Observer, Factory |
 | 5 | [Splitwise](./_05_Medium_Splitwise/PROBLEM.md) · ✅ [**Solution**](./_05_Medium_Splitwise/SOLUTION.md) | Medium | 🟡 Medium — lock-free ledger, conserves to zero; greedy debt simplification | Strategy, Factory, Observer, Facade |
 | 6 | [Elevator System](./_06_Medium_ElevatorSystem/PROBLEM.md) · ✅ [**Solution**](./_06_Medium_ElevatorSystem/SOLUTION.md) | Medium | 🔴 **High** — request queue, scheduler thread per car | State, Strategy, Command |

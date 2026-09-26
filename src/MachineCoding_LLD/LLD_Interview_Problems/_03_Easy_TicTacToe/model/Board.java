@@ -13,9 +13,9 @@ import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.strategy.Winn
  * mutating entry point, and it calls the strategy exactly once per placed mark — the contract the
  * O(1) counter strategy depends on. The board never rescans itself.
  *
- * <p>Not thread-safe by design: a single game is turn-based and confined to one thread. Where
- * concurrency actually matters (many games at once) it's handled one level up by the actor-style
- * {@code GameServer}, not by locking every cell. See {@code SOLUTION.md} §5.
+ * <p>Not thread-safe by design: a single game is turn-based and confined to one thread. See
+ * {@code SOLUTION.md} §5 for where concurrency would actually belong if this were extended to
+ * host many games at once.
  */
 public final class Board {
 

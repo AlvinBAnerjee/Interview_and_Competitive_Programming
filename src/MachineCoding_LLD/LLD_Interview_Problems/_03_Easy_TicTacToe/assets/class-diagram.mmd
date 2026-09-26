@@ -68,17 +68,6 @@ classDiagram
         +smartBot(...)$ Player
     }
 
-    class GameServer {
-        <<hosts many games>>
-        -ConcurrentMap~String,GameSession~ sessions
-        +host(String, Game)
-        +submitMove(String,Player,int,int) CompletableFuture~GameStatus~
-    }
-    class GameSession {
-        -Game game
-        -ExecutorService actor
-    }
-
     class Move {
         <<record>>
         +int row
@@ -111,7 +100,5 @@ classDiagram
     Player o-- PlayerStrategy : picks move
     RuleBasedBotStrategy ..> LastMoveScanStrategy : reuses completesLine
     PlayerFactory ..> Player : creates
-    GameServer *-- GameSession : one per game
-    GameSession *-- Game : confines to 1 thread
     Board ..> Move : emptyCells
     Player ..> Symbol : marks with

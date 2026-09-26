@@ -3,13 +3,13 @@
 A generic **N×N, K-in-a-row** tic-tac-toe engine: two players (human or bot) alternate, the
 engine rejects every illegal move, and it detects a win **without ever rescanning the board**.
 The design is deliberately restrained — three patterns that earn their place (**Strategy**,
-**Factory**, **Observer**) and a pointed decision *not* to use **State** — plus a separate,
-tested answer for where concurrency actually belongs.
+**Factory**, **Observer**) and a pointed decision *not* to use **State**. Concurrency (hosting
+many games on a server) is discussed but not built — see §5 for why.
 
 > Code lives in this folder under package
 > `MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe` (subpackages
-> [`model`](./model), [`strategy`](./strategy), [`observer`](./observer), [`factory`](./factory),
-> [`server`](./server)). Run instructions are at the bottom.
+> [`model`](./model), [`strategy`](./strategy), [`observer`](./observer), [`factory`](./factory)).
+> Run instructions are at the bottom.
 
 ---
 
@@ -17,10 +17,9 @@ tested answer for where concurrency actually belongs.
 
 <img src="./assets/class-diagram.png" alt="Tic-Tac-Toe class diagram" width="960">
 
-**Reading the arrows:** ◆ filled diamond = **composition** (the game *owns* its board; a session
-*owns* its game). ◇ hollow diamond = **aggregation** (the game *holds* players and observers, a
-player *holds* a strategy — all injected). ▷ hollow triangle = **interface realization**. Dashed =
-**dependency / uses**.
+**Reading the arrows:** ◆ filled diamond = **composition** (the game *owns* its board). ◇ hollow
+diamond = **aggregation** (the game *holds* players and observers, a player *holds* a strategy —
+all injected). ▷ hollow triangle = **interface realization**. Dashed = **dependency / uses**.
 
 | Role | Class | Responsibility |
 |------|-------|----------------|
@@ -30,7 +29,6 @@ player *holds* a strategy — all injected). ▷ hollow triangle = **interface r
 | **Strategy** (move pick) | `PlayerStrategy` → `HumanPlayerStrategy`, `RandomBotStrategy`, `RuleBasedBotStrategy` | *How* a player chooses — the seam that makes human/bot interchangeable. |
 | **Factory** | `PlayerFactory` | Builds a `Player` wired to the right strategy (`human` / `randomBot` / `smartBot`). |
 | **Observer** | `GameObserver` → `ConsoleGameObserver` | Reacts to moves / game-over without the engine knowing who's listening. |
-| Concurrency | `GameServer`, `GameSession` | Hosts **many** games, each confined to its own thread (see §5). |
 | Value objects | `Player`, `Move`, `Symbol`, `GameStatus` | Plain data. |
 
 ---
@@ -94,32 +92,30 @@ win?" look-ahead without mutating anything.
 | **No State pattern** | The status only goes `IN_PROGRESS → {WIN, DRAW}` then freezes — a plain enum. State classes would be pure ceremony here. | An `InProgressState`/`WonState` hierarchy — the vending machine *needs* State (per-mode behaviour); tic-tac-toe doesn't. Forcing it is the anti-pattern the rubric warns about. |
 | **O(1) incremental** win check for 3×3 | Exactly what the prompt asks for; no rescans. | O(N²) per move. |
 | **Typed guards throw** `InvalidMoveException` | Out-of-turn / occupied / OOB are contract violations with a clear, UI-surfaceable message. | Returning a boolean loses the reason; silent no-ops hide bugs. |
-| **Single game is single-threaded** | A match is turn-based — concurrent moves are nonsensical. Concurrency is pushed to the server tier (§5). | Locking every cell of a board only one player touches. |
+| **Single game is single-threaded, and stays that way** | A match is turn-based — concurrent moves are nonsensical. "Host many games on a server" isn't in the requirements or evaluation metrics; the problem statement itself says not to over-engineer this. | Building an actor-model `GameServer` (one thread per game, `ConcurrentHashMap` of sessions) up front — real design, but speculative generality for a scenario nobody asked to grade. It's one paragraph away if asked (§5), not a standing feature. |
 
 ---
 
-## 5. Concurrency — where it *actually* belongs
+## 5. Concurrency (only if asked)
 
-> A single game is turn-based, so it's single-threaded **by design**. But "host many games on a
-> server" is a real concurrency question — and the clean answer is **not** to lock the game.
+> A single game is turn-based, so it's single-threaded **by design** — there's nothing to
+> parallelize within one match. "Host many games on a server" is a real question an interviewer
+> *might* raise, but it isn't in this problem's requirements or evaluation metrics, and the brief
+> itself warns not to over-engineer it. So it's a documented answer, not a built feature.
 
-<img src="./assets/concurrency.png" alt="GameServer actor-model concurrency" width="440">
+**If asked:** don't lock the game. Shard by game id and give **each game its own single-thread
+executor** — the **actor model**. Moves for a game are routed onto that game's thread, so:
 
-`GameServer` shards by game id and gives **each game its own single-thread executor**
-(`GameSession`) — the **actor model**. Moves for a game are routed onto that game's thread, so:
-
-- each `Game`/`Board` is touched by **exactly one thread** → **no locks inside the engine**, no
+- each `Game`/`Board` is touched by **exactly one thread** → no locks inside the engine, no
   shared mutable board across threads;
-- **different games run truly in parallel** across the pool of per-game threads;
-- the only cross-thread shared state is the `ConcurrentHashMap` of sessions — a lookup table,
+- different games run truly in parallel across the pool of per-game threads;
+- the only cross-thread shared state is a `ConcurrentHashMap` of sessions — a lookup table,
   concurrent by construction;
-- `submitMove` is non-blocking, returning a `CompletableFuture<GameStatus>`; an illegal move
-  surfaces as a **failed future** (the same `InvalidMoveException`), never a corrupted board.
+- a move-submission API would be non-blocking (`CompletableFuture<GameStatus>`), with an illegal
+  move surfacing as a failed future rather than a corrupted board.
 
-This is the "make each game single-threaded via an actor/queue" answer the brief hints at — it
-scales to thousands of concurrent games without turning the engine into a lock salad. The test
-`concurrent results match single-threaded reference` hosts 300 games, drives them all at once
-through the server, and asserts every result equals its single-threaded playout.
+That's the "make each game single-threaded via an actor/queue" answer — worth saying out loud if
+asked, cheap to sketch on a whiteboard, and not worth the extra files/tests when it isn't.
 
 ---
 
@@ -144,14 +140,13 @@ javac -d out $(find $PKG -name '*.java')
 
 BASE=MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe
 java -cp out $BASE.Main           # 3 walkthroughs: 3×3 human win, bot-vs-bot draw, 5×5 K=4
-java -cp out $BASE.TicTacToeTest  # 22 assertions incl. the concurrency test
+java -cp out $BASE.TicTacToeTest  # assertions across every path
 ```
 
 The harness (plain `main`, no JUnit — matching this repo) exits non-zero on failure and covers:
 win on every axis (both strategies), draw, all four illegal-move rejections, **counter-vs-scan
-agreement over 500 random games**, a K<N non-line diagonal win, the smart bot's win-over-block
-priority and blocking, and **300 games driven concurrently through the `GameServer`** matching
-their single-threaded reference.
+agreement over 500 random games**, a K<N non-line diagonal win, and the smart bot's
+win-over-block priority and blocking.
 
 ---
 
@@ -165,6 +160,8 @@ their single-threaded reference.
 - **Undo / replay** — the move list is all you need; the Observer already sees every move.
 - **> 2 players / 3-D board** — the scan strategy generalises (more axes); the counter trick's
   ±N encoding is the part that's specific to two players.
+- **Host many games concurrently** — the actor-model server described in §5: one thread per
+  game behind a `ConcurrentHashMap` of sessions, moves submitted as non-blocking futures.
 
 > Pattern references: [DesignPatterns/_10_StrategyDesignPattern](../../DesignPatterns/_10_StrategyDesignPattern),
 > [_01_FactoryDesignPattern](../../DesignPatterns/_01_FactoryDesignPattern),

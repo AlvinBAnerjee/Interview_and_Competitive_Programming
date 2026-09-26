@@ -24,8 +24,9 @@ import MachineCoding_LLD.LLD_Interview_Problems._03_Easy_TicTacToe.observer.Game
  *
  * <h3>Threading</h3>
  * A {@code Game} is <b>not</b> thread-safe and doesn't try to be — a match is turn-based, so
- * concurrent moves are nonsensical within one game. Hosting many games at once is the
- * {@code GameServer}'s job (one thread per game); see {@code SOLUTION.md} §5.
+ * concurrent moves are nonsensical within one game. Hosting many games at once (a server with
+ * one thread per game) is a documented extension, not part of this exercise; see
+ * {@code SOLUTION.md} §5.
  */
 public final class Game {
 
