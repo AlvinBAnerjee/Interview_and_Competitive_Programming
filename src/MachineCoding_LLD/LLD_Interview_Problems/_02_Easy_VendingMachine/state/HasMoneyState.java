@@ -1,28 +1,21 @@
 package MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.state;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.VendingMachine;
-import MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.model.Denomination;
 import MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.model.Product;
 import MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.model.TransactionResult;
 
 /**
- * Money is on the balance. More coins are accepted; a selection runs the full purchase
- * check; cancel refunds everything and returns to idle.
+ * Money is on the balance. More money is accepted; a selection runs the purchase check;
+ * cancel refunds everything and returns to idle.
  *
- * <p>Note the ordering of the guards in {@link #selectProduct}: existence → stock → funds →
- * <em>can we make change</em>. The change check is last and is done against the reserve
- * <b>plus the just-inserted coins</b> (a real machine banks your coins before paying out),
- * and it's a dry run — nothing is committed until every guard passes.
+ * <p>Guards run in order — existence → stock → funds — and nothing is committed until every
+ * guard passes, so a rejected purchase never leaves the machine in a half-updated state.
  */
 public class HasMoneyState implements VendingState {
 
     @Override
-    public boolean insertCoin(VendingMachine machine, Denomination coin) {
-        machine.acceptCoin(coin); // stack more money, stay in HAS_MONEY
+    public boolean insertMoney(VendingMachine machine, int amount) {
+        machine.addToBalance(amount); // stack more money, stay in HAS_MONEY
         return true;
     }
 
@@ -39,23 +32,14 @@ public class HasMoneyState implements VendingState {
             return TransactionResult.insufficientFunds(product, product.price() - machine.balance());
         }
 
-        int changeOwed = machine.balance() - product.price();
-        Map<Denomination, Integer> projected = machine.projectedReserve(); // reserve + inserted
-        Optional<List<Denomination>> plan = machine.changeStrategy().makeChange(changeOwed, projected);
-        if (plan.isEmpty()) {
-            return TransactionResult.cannotMakeChange(product); // keep money; user can cancel
-        }
-
-        // All guards passed — commit through the transient DISPENSING state.
-        machine.setState(machine.dispensingState());
-        List<Denomination> change = machine.commitDispense(code, plan.get());
+        int change = machine.commitDispense(code, product.price());
         machine.setState(machine.idleState());
         return TransactionResult.dispensed(product, change);
     }
 
     @Override
-    public List<Denomination> cancel(VendingMachine machine) {
-        return machine.refund(); // returns inserted coins and resets to idle
+    public int cancel(VendingMachine machine) {
+        return machine.refund(); // returns inserted amount and resets to idle
     }
 
     @Override

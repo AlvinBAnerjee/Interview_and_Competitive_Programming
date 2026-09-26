@@ -1,68 +1,60 @@
 # Vending Machine — Solution
 
-A vending machine modeled as a **State machine**: it accepts coins, dispenses a product with
+A vending machine modeled as a **State machine**: it accepts money, dispenses a product with
 correct change, refunds on cancel, and rejects every illegal action (dispensing without
-payment, buying out-of-stock, etc.). The star of the show is the **State pattern**; change-making
-is a swappable **Strategy**.
+payment, buying out-of-stock, etc.). The **State pattern** is the entire point of this
+exercise — everything else is kept deliberately thin so it doesn't compete for attention.
 
 > Code is in this folder under `MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine`
-> (subpackages [`model`](./model), [`state`](./state), [`strategy`](./strategy)). Run steps at the bottom.
+> (subpackages [`model`](./model), [`state`](./state)). Run steps at the bottom.
 
 ---
 
 ## 1. Class model
 
-<img src="./assets/class-diagram.png" alt="Vending machine class diagram" width="920">
+<img src="./assets/class-diagram.png" alt="Vending machine class diagram" width="820">
 
-**Arrows:** ▷ dashed = interface realization · ◇ = aggregation (the machine *holds* a state and a
-change strategy) · ◆ = composition (it *owns* its inventories) · dashed → = dependency/uses.
+**Arrows:** ▷ dashed = interface realization · ◇ = aggregation (the machine *holds* a state) ·
+◆ = composition (it *owns* its stock) · dashed → = dependency/uses.
 
 | Role | Class | Responsibility |
 |------|-------|----------------|
-| **Context** | `VendingMachine` | Public API (`insertCoin`/`selectProduct`/`cancel`) delegates to the current state; owns money + stock and the mutation helpers. |
-| **State** | `VendingState` → `IdleState`, `HasMoneyState`, `DispensingState` | Same action, different behavior per mode; each drives the transition. |
-| **Strategy** | `ChangeStrategy` → `GreedyChangeStrategy` | The change-making algorithm, pulled out so it can be swapped. |
-| Money/stock | `Inventory<K>`, `Denomination`, `Product` | Plain counting + reference data. |
+| **Context** | `VendingMachine` | Public API (`insertMoney`/`selectProduct`/`cancel`) delegates to the current state; owns the balance + stock and the mutation helpers. |
+| **State** | `VendingState` → `IdleState`, `HasMoneyState` | Same action, different behavior per mode; each drives the transition. |
+| Stock | `Inventory<K>`, `Product` | Plain counting + reference data. |
 | Result | `TransactionResult` | Typed outcome (`DISPENSED`, `INSUFFICIENT_FUNDS`, …) instead of exceptions. |
 
 ---
 
 ## 2. The State machine (the core)
 
-<img src="./assets/state-diagram.png" alt="Vending machine state diagram" width="900">
+<img src="./assets/state-diagram.png" alt="Vending machine state diagram" width="760">
 
 The machine's *behavior for the same action* depends on its mode — that's exactly what the
 State pattern captures, replacing a sprawl of `if (mode == …)` checks:
 
-| Action | `IDLE` | `HAS_MONEY` | `DISPENSING` |
-|--------|--------|-------------|--------------|
-| `insertCoin` | bank it → `HAS_MONEY` | add to balance | rejected (busy) |
-| `selectProduct` | ✗ `NEED_MONEY` | run guards → dispense or reject | rejected (busy) |
-| `cancel` | nothing | refund → `IDLE` | rejected (busy) |
+| Action | `IDLE` | `HAS_MONEY` |
+|--------|--------|-------------|
+| `insertMoney` | bank it → `HAS_MONEY` | add to balance |
+| `selectProduct` | ✗ `NEED_MONEY` | run guards → dispense or reject |
+| `cancel` | nothing | refund → `IDLE` |
 
-`DispensingState` is **transient** — entered and left inside one `selectProduct` call since our
-dispense is synchronous. It's modeled explicitly anyway: it's the one place the "no
-double-dispense" rule lives, and the single point you'd guard with a lock if dispensing ever
-became asynchronous (motor delay, card auth). See §5 on concurrency.
+Only two states exist. A `DISPENSING` state was considered and deliberately cut — see §4.
 
 ---
 
 ## 3. Buying + making change
 
-<img src="./assets/purchase-sequence.png" alt="Purchase sequence diagram" width="600">
-
-`HasMoneyState.selectProduct` runs four guards **in order**, and only commits if all pass:
+`HasMoneyState.selectProduct` runs three guards **in order**, and only commits if all pass:
 
 1. **exists?** → `INVALID_SELECTION`
 2. **in stock?** → `OUT_OF_STOCK`
 3. **enough money?** → `INSUFFICIENT_FUNDS`
-4. **can we make exact change?** → `CANNOT_MAKE_CHANGE`
 
-The change check is a **dry run** against the reserve **plus the just-inserted coins** — a real
-machine banks your coins before paying out, so those coins are available as change. Only after
-all four pass does `commitDispense` mutate anything (bank coins → pay change plan → drop stock).
-That means a rejected purchase never leaves the machine in a half-updated state, and the user's
-money is retained so they can pick another item or cancel for a refund.
+Only after all three pass does `commitDispense` mutate anything (charge the price, drop
+stock, return `balance - price` as change). A rejected purchase never leaves the machine in a
+half-updated state, and the user's money is retained so they can pick another item or cancel
+for a refund.
 
 ---
 
@@ -71,17 +63,20 @@ money is retained so they can pick another item or cancel for a refund.
 | Decision | Why | Alternative |
 |----------|-----|-------------|
 | **State pattern** for modes | Per-mode behavior + transitions in cohesive classes; no `switch` on a mode flag. | An enum-`switch` machine — fine for 2 states, rots as states grow. |
-| **Strategy** for change-making | The algorithm is the volatile part; greedy today, DP tomorrow, no machine edits. | Hard-code greedy — locks you in. |
+| Money as a plain **`int` balance** | The lesson here is the state machine, not coin-counting. Change is just `balance - price`. | Model exact denominations + a change-making algorithm — real, but it's a second problem bolted onto this one (see extensions). |
+| **No `DispensingState`** | Our dispense is synchronous — it completes inside one `selectProduct` call, so no caller can ever observe the machine mid-dispense. A state nothing can ever be caught in isn't modeling anything real; it's ceremony. | Keep it "for when dispensing becomes async" — solving a problem that doesn't exist yet. If dispensing ever *does* become async (motor delay, card auth), add the state back then, at the call site that needs it. |
 | **Typed `TransactionResult`** | "Out of stock" / "insufficient" are *expected* outcomes, not exceptions. | Throwing — abuses exceptions for control flow. |
-| **No Factory / Singleton** | `Product` is a data record (no polymorphism to build); one machine object needs no global access point. | Forcing them to tick boxes — the prompt lists them, but they'd be ceremony here. |
+| **No Factory / Singleton / Strategy** | `Product` is a data record (no polymorphism to build); one machine object needs no global access point; change is arithmetic, not a swappable algorithm. | Forcing them in because a checklist mentions them — ceremony with no payoff here. |
 | **No threads** | A vending machine is inherently one user at a time. | See §5 — a single lock *if* asked. |
 | Out-of-stock is a **guard, not a state** | The machine's mode doesn't change — you can still pick another product. | A dedicated `OutOfStockState` — over-models a transient rejection. |
 
-### Change-making: greedy vs. DP
-`GreedyChangeStrategy` (largest-coin-first) is optimal for a **canonical** coin set (1,2,5,10,…)
-and reports failure rather than mispaying. It is **not** optimal for arbitrary denominations
-(coins {1,3,4}, amount 6 → greedy 4+1+1, optimal 3+3). Because it's a Strategy, a DP-based maker
-drops in with zero changes to the state machine — a great thing to say out loud.
+### Exact change: a real feature, not a free one
+A real vending machine tracks coin denominations and can run out of the right combination to
+make change. That's legitimate complexity — but it's a **second, separable problem**
+(a change-making algorithm) layered on top of the state machine, not part of it. If an
+interviewer asks for it, it drops in cleanly as a `ChangeStrategy` the `HasMoneyState` calls
+before committing, without touching the state machine itself. Building it in from the start
+would have meant learning two things at once instead of one.
 
 ---
 
@@ -91,10 +86,10 @@ drops in with zero changes to the state machine — a great thing to say out lou
 > single-threaded by design.
 
 If pushed to make it concurrent, the whole transaction (state check → guards → commit) is one
-critical section. The minimal fix: guard `insertCoin`/`selectProduct`/`cancel` with a single
-lock so two users can't both drive the machine into `DISPENSING`. `DispensingState` already
-marks the exact window to protect. No lock-striping is warranted — there's one machine, one
-hopper; contention is a person waiting, not a hot path.
+critical section. The minimal fix: guard `insertMoney`/`selectProduct`/`cancel` with a single
+lock so two users can't interleave and both dispense against the same balance. No
+lock-striping is warranted — there's one machine, one hopper; contention is a person waiting,
+not a hot path.
 
 ---
 
@@ -102,9 +97,9 @@ hopper; contention is a person waiting, not a hot path.
 
 | Operation | Cost |
 |-----------|------|
-| `insertCoin` | `O(1)` |
-| `selectProduct` (+ greedy change) | `O(d)`, `d` = number of denominations |
-| `cancel` / `refund` | `O(k)`, `k` = coins inserted |
+| `insertMoney` | `O(1)` |
+| `selectProduct` | `O(1)` |
+| `cancel` / `refund` | `O(1)` |
 
 ---
 
@@ -117,20 +112,24 @@ javac -d out $(find $PKG -name '*.java')
 
 BASE=MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine
 java -cp out $BASE.Main               # happy-path walkthrough
-java -cp out $BASE.VendingMachineTest # 22 assertions across every path
+java -cp out $BASE.VendingMachineTest # assertions across every path
 ```
 
 The harness (plain `main`, no JUnit) exits non-zero on failure and covers: select-before-pay,
-correct change, exact money, insufficient funds, invalid code, out-of-stock, cancel/refund,
-can't-make-change (money retained), and change funded from just-inserted coins.
+correct change, exact money, insufficient funds, invalid code, out-of-stock, and cancel/refund.
 
 ---
 
 ## 8. Extensions an interviewer might ask for
 
+- **Exact-denomination change** — introduce `Denomination` + a `ChangeStrategy` (greedy, then
+  DP for non-canonical coin sets) that `HasMoneyState` consults before committing; a
+  `CANNOT_MAKE_CHANGE` result when the reserve can't form the exact amount.
 - **Card payment** — a `PaymentStrategy` alongside cash; `HasMoneyState` becomes payment-agnostic.
-- **DP change-maker** — new `ChangeStrategy` for non-canonical denominations.
 - **Admin/maintenance state** — a `ServiceState` for restocking that locks out purchases.
+- **Async dispensing** — if a real motor/actuator is in play, this is where `DispensingState`
+  earns its place: it now protects a real window between "guards passed" and "product
+  actually dropped."
 - **Concurrency** — one lock around the transaction (see §5).
 
 > Pattern reference: this is the applied version of

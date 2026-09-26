@@ -3,26 +3,16 @@ stateDiagram-v2
     direction LR
     [*] --> IDLE
 
-    IDLE --> HAS_MONEY : insertCoin / bank coin
+    IDLE --> HAS_MONEY : insertMoney / add balance
     IDLE --> IDLE : selectProduct ✗ (NEED_MONEY)
 
-    HAS_MONEY --> HAS_MONEY : insertCoin / add money
+    HAS_MONEY --> HAS_MONEY : insertMoney / add balance
     HAS_MONEY --> IDLE : cancel / refund
-    HAS_MONEY --> DISPENSING : selectProduct ✓ (guards pass)
-
-    DISPENSING --> IDLE : drop product +<br/>pay change, reset balance
-    DISPENSING --> DISPENSING : any action ✗ (MACHINE_BUSY)
+    HAS_MONEY --> IDLE : selectProduct ✓ (guards pass) / dispense + change
 
     note left of HAS_MONEY
         selectProduct ✗ → stay in
         HAS_MONEY, keep money, if:
         invalid code / out-of-stock /
-        insufficient funds / no change
-    end note
-
-    note right of DISPENSING
-        Transient: entered and left
-        inside one selectProduct call.
-        The lock point if dispensing
-        ever becomes async.
+        insufficient funds
     end note

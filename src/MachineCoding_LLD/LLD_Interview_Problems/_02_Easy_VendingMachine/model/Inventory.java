@@ -1,13 +1,11 @@
 package MachineCoding_LLD.LLD_Interview_Problems._02_Easy_VendingMachine.model;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A simple counting store: how many of each key are on hand. Used twice — once for product
- * stock (keyed by product code) and once for the machine's coin reserve (keyed by
- * {@link Denomination}) — so the counting/decrement logic lives in exactly one place.
+ * A simple counting store: how many of each key are on hand. Backs the machine's product
+ * stock (keyed by product code).
  */
 public class Inventory<K> {
 
@@ -44,10 +42,5 @@ public class Inventory<K> {
 
     public boolean hasStock(K key) {
         return count(key) > 0;
-    }
-
-    /** Read-only view of the current counts (used to plan change without mutating). */
-    public Map<K, Integer> snapshot() {
-        return Collections.unmodifiableMap(new LinkedHashMap<>(counts));
     }
 }
