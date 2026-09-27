@@ -15,9 +15,9 @@ public class Dollar50Dispenser implements DispenseChain {
             int num = cur.getAmount()/50;
             int remainder = cur.getAmount() % 50;
             System.out.println("Dispensing "+num+" 50$ note");
-            if(remainder !=0) this.chain.dispense(new Currency(remainder));
+            if(remainder !=0) forward(this.chain, new Currency(remainder));
         }else{
-            this.chain.dispense(cur);
+            forward(this.chain, cur);
         }
     }
 
